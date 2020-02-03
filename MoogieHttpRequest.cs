@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace Moogie.Http
 {
@@ -10,35 +13,13 @@ namespace Moogie.Http
     /// </summary>
     public class MoogieHttpRequest
     {
-        /// <summary>
-        /// Gets the underlying HttpClient used to make the requests.
-        /// </summary>
-        public HttpClient HttpClient { get; internal set; }
+        internal HttpClient HttpClient { get; set; }
 
-        /// <summary>
-        /// Gets the Uri to make the request against.
-        /// </summary>
-        public Uri Uri { get; internal set; }
+        internal Uri Uri { get; set; }
+        internal Dictionary<string, string> QueryParameters { get; set; }
 
-        /// <summary>
-        /// Gets the UserAgent that will be sent with the request.
-        /// </summary>
-        public string UserAgent { get; internal set; }
-
-        /// <summary>
-        /// Gets the headers that will be sent with the request.
-        /// </summary>
-        public Dictionary<string, string> Headers { get; internal set; }
-
-        /// <summary>
-        /// Gets the query parameters which will be added to the <see cref="Uri"/> property to form a complete URL.
-        /// </summary>
-        public Dictionary<string, string> QueryParameters { get; internal set; }
-
-        /// <summary>
-        /// Gets whether or not the request destination should be allowed to automatically redirect.
-        /// </summary>
-        public bool AllowAutoRedirect { get; internal set; }
+        internal string UserAgent { get; set; }
+        internal Dictionary<string, string> Headers { get; set; }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MoogieHttpRequest"/> struct with a base URI.
@@ -72,20 +53,6 @@ namespace Moogie.Http
             httpRequest.UserAgent = userAgent;
             return httpRequest;
         }
-
-        /// <summary>
-        /// Sets whether the request should allow automatic redirects or not. This is defaulted to false upon
-        /// initialization of a <see cref="MoogieHttpRequest"/>, but can be overriden with this method.
-        /// </summary>
-        /// <param name="httpRequest">The http request to set the AllowAutoRedirect property against.</param>
-        /// <param name="allowAutoRedirect">Whether or not to allow automatic redirects.</param>
-        /// <returns>The current <see cref="MoogieHttpRequest"/>.</returns>
-        public static MoogieHttpRequest ShouldAllowAutoRedirect(this MoogieHttpRequest httpRequest,
-            bool allowAutoRedirect = true)
-        {
-            httpRequest.AllowAutoRedirect = allowAutoRedirect;
-            return httpRequest;
-        }
     }
 
     /// <summary>
@@ -111,39 +78,6 @@ namespace Moogie.Http
 
             return httpRequest;
         }
-
-        /// <summary>
-        /// Sets the content type for a <see cref="MoogieHttpRequest"/> instance.
-        /// </summary>
-        /// <param name="httpRequest">The http request to set the content type against.</param>
-        /// <param name="contentType">The content type to set against the request.</param>
-        /// <returns>The current <see cref="MoogieHttpRequest"/>.</returns>
-        public static MoogieHttpRequest WithContentType(this MoogieHttpRequest httpRequest,
-            string contentType) => httpRequest.WithHeader("Content-Type", contentType);
-
-        /// <summary>
-        /// Sets the content type for a <see cref="MoogieHttpRequest"/> to be text/plain.
-        /// </summary>
-        /// <param name="httpRequest">The http request to set the content type against.</param>
-        /// <returns>The current <see cref="MoogieHttpRequest"/>.</returns>
-        public static MoogieHttpRequest WithPlainContentType(this MoogieHttpRequest httpRequest)
-            => httpRequest.WithContentType("text/plain");
-
-        /// <summary>
-        /// Sets the content type for a <see cref="MoogieHttpRequest"/> to be application/json.
-        /// </summary>
-        /// <param name="httpRequest">The http request to set the content type against.</param>
-        /// <returns>The current <see cref="MoogieHttpRequest"/>.</returns>
-        public static MoogieHttpRequest WithJsonContentType(this MoogieHttpRequest httpRequest)
-            => httpRequest.WithContentType("application/json");
-
-        /// <summary>
-        /// Sets the content type for a <see cref="MoogieHttpRequest"/> to be application/xml.
-        /// </summary>
-        /// <param name="httpRequest">The http request to set the content type against.</param>
-        /// <returns>The current <see cref="MoogieHttpRequest"/>.</returns>
-        public static MoogieHttpRequest WithXmlContentType(this MoogieHttpRequest httpRequest)
-            => httpRequest.WithContentType("application/xml");
     }
 
     /// <summary>
@@ -177,7 +111,15 @@ namespace Moogie.Http
     /// </summary>
     public static class MoogieHttpRequestActionExtensions
     {
-
+        /// <summary>
+        /// Sets the request method to Get.
+        /// </summary>
+        /// <param name="httpRequest">The http request to set the method against.</param>
+        /// <returns>The current <see cref="MoogieHttpRequest"/>.</returns>
+        public static MoogieHttpRequest Get(this MoogieHttpRequest httpRequest)
+        {
+            return httpRequest;
+        }
     }
 
     /// <summary>
@@ -185,5 +127,30 @@ namespace Moogie.Http
     /// </summary>
     public static class MoogieHttpRequestSendTriggeringExtensions
     {
+        private static async Task<HttpResponseMessage> MakeRequest(this MoogieHttpRequest httpRequest)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, httpRequest.Uri);
+
+            if (!string.IsNullOrWhiteSpace(httpRequest.UserAgent))
+                request.Headers.Add("User-Agent", httpRequest.UserAgent);
+
+            if (httpRequest.Headers != null)
+                foreach (var header in httpRequest.Headers)
+                    request.Headers.Add(header.Key, header.Value);
+
+            return await httpRequest.HttpClient.SendAsync(request);
+        }
+
+        /// <summary>
+        /// Makes the request and ensures that the response is successful. If the response is not successful, an error
+        /// will be thrown.
+        /// </summary>
+        /// <param name="httpRequest">The configured request to make.</param>
+        /// <returns>An awaitable task.</returns>
+        public static async Task EnsureResponseSuccessful(this MoogieHttpRequest httpRequest)
+        {
+            var response = await httpRequest.MakeRequest();
+            response.EnsureSuccessStatusCode();
+        }
     }
 }
