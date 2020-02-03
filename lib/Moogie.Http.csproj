@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Moogie.Http.Tests\**" />
+    <Compile Include="..\MoogieHttpRequest.cs">
+      <Link>MoogieHttpRequest.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Moogie.Http.Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Moogie.Http.Tests\**" />
+    <None Remove=".editorconfig" />
+    <None Remove=".gitignore" />
+    <None Remove="LICENSE" />
+    <None Remove="README.md" />
+  </ItemGroup>
+
+</Project>
