@@ -10,10 +10,10 @@ namespace Moogie.Http.Tests.Unit.HeaderExtensionsTests
         {
             OnRequestMade(r => Assert.Equal("foo-bar", r.Headers.Authorization.Parameter));
 
-            await MoogieHttpRequest
-                .WithHeader("Authorization", "Bearer foo-bar")
+            await HttpRequest
+                .WithRequestHeader("Authorization", "Bearer foo-bar")
                 .AsAGet()
-                .EnsureResponseSuccessful();
+                .EnsureSuccessStatusCode();
         }
 
         [Fact]
@@ -21,11 +21,11 @@ namespace Moogie.Http.Tests.Unit.HeaderExtensionsTests
         {
             OnRequestMade(r => Assert.Equal("bar", r.Headers.Authorization.Parameter));
 
-            await MoogieHttpRequest
-                .WithHeader("Authorization", "Bearer foo")
-                .WithHeader("Authorization", "Bearer bar")
+            await HttpRequest
+                .WithRequestHeader("Authorization", "Bearer foo")
+                .WithRequestHeader("Authorization", "Bearer bar")
                 .AsAGet()
-                .EnsureResponseSuccessful();
+                .EnsureSuccessStatusCode();
         }
     }
 }

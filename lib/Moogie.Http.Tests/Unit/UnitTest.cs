@@ -12,24 +12,29 @@ namespace Moogie.Http.Tests.Unit
     public abstract class UnitTest
     {
         protected const string RequestUrl = "https://www.google.com";
-        protected MoogieHttpRequest MoogieHttpRequest { get; }
+        protected HttpRequest HttpRequest { get; }
         protected IReturnsResult<HttpMessageHandler> MessageHandlerResult { get; private set; }
 
         protected UnitTest()
         {
             var mockMessageHandler = new Mock<HttpMessageHandler>();
+            MessageHandlerResult = ConfigureMessageHandlerResult(mockMessageHandler);
+            HttpRequest = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
+        }
 
-            MessageHandlerResult = mockMessageHandler
+        protected IReturnsResult<HttpMessageHandler> ConfigureMessageHandlerResult(
+            Mock<HttpMessageHandler> messageHandler)
+            => messageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync",
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>())
                 .Returns(Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 
-            MoogieHttpRequest = new MoogieHttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
-        }
-
         protected void OnRequestMade(Action<HttpRequestMessage> handler)
-            => MessageHandlerResult.Callback<HttpRequestMessage, CancellationToken>((r, c) => handler(r));
+            => OnRequestMade(handler, MessageHandlerResult);
+
+        protected void OnRequestMade(Action<HttpRequestMessage> handler, IReturnsResult<HttpMessageHandler> result)
+            => result.Callback<HttpRequestMessage, CancellationToken>((r, c) => handler(r));
     }
 }

@@ -10,10 +10,10 @@ namespace Moogie.Http.Tests.Unit.HeaderExtensionsTests
         {
             OnRequestMade(r => Assert.Equal("moogie-http", r.Headers.UserAgent.ToString()));
 
-            await MoogieHttpRequest
+            await HttpRequest
                 .WithUserAgent("moogie-http")
                 .AsAGet()
-                .EnsureResponseSuccessful();
+                .EnsureSuccessStatusCode();
         }
     }
 }
