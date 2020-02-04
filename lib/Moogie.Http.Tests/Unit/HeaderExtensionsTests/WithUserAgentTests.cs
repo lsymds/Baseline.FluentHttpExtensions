@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Moogie.Http.Tests.Unit.GeneralExtensionsTests
+namespace Moogie.Http.Tests.Unit.HeaderExtensionsTests
 {
     public class WithUserAgentTests : UnitTest
     {
@@ -12,7 +12,7 @@ namespace Moogie.Http.Tests.Unit.GeneralExtensionsTests
 
             await MoogieHttpRequest
                 .WithUserAgent("moogie-http")
-                .Get()
+                .AsAGet()
                 .EnsureResponseSuccessful();
         }
     }

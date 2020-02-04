@@ -16,9 +16,8 @@ namespace Moogie.Http
         internal HttpClient HttpClient { get; set; }
 
         internal Uri Uri { get; set; }
+        internal HttpMethod HttpMethod { get; set; } = HttpMethod.Get;
         internal Dictionary<string, string> QueryParameters { get; set; }
-
-        internal string UserAgent { get; set; }
         internal Dictionary<string, string> Headers { get; set; }
 
         /// <summary>
@@ -41,18 +40,6 @@ namespace Moogie.Http
     /// </summary>
     public static class MoogieHttpRequestGeneralExtensions
     {
-        /// <summary>
-        /// Sets the user agent for a <see cref="MoogieHttpRequest"/>.
-        /// </summary>
-        /// <param name="httpRequest">The http request to set the UserAgent against.</param>
-        /// <param name="userAgent">The user agent to set.</param>
-        /// <returns>The current <see cref="MoogieHttpRequest"/>.</returns>
-        public static MoogieHttpRequest WithUserAgent(this MoogieHttpRequest httpRequest,
-            string userAgent)
-        {
-            httpRequest.UserAgent = userAgent;
-            return httpRequest;
-        }
     }
 
     /// <summary>
@@ -78,6 +65,46 @@ namespace Moogie.Http
 
             return httpRequest;
         }
+
+        /// <summary>
+        /// Sets the user agent for a <see cref="MoogieHttpRequest"/>.
+        /// </summary>
+        /// <param name="httpRequest">The http request to set the UserAgent against.</param>
+        /// <param name="userAgent">The user agent to set.</param>
+        /// <returns>The current <see cref="MoogieHttpRequest"/>.</returns>
+        public static MoogieHttpRequest WithUserAgent(this MoogieHttpRequest httpRequest,
+            string userAgent) => httpRequest.WithHeader("User-Agent", userAgent);
+
+        /// <summary>
+        /// Sets the content type that the requester can interpret. By default, this method appends multiple calls of
+        /// <see cref="AcceptingResponseContentType"/> to one another. If you wish to change this behavior, set the
+        /// <see cref="replace"/> parameter to true.
+        /// </summary>
+        /// <param name="httpRequest">The http request to set the Accept header against.</param>
+        /// <param name="contentType">The content type that the requester can interpret.</param>
+        /// <param name="replace">Whether to replace the header instead of adding to it.</param>
+        /// <returns>The current <see cref="MoogieHttpRequest"/>.</returns>
+        public static MoogieHttpRequest AcceptingResponseContentType(this MoogieHttpRequest httpRequest,
+            string contentType,
+            bool replace = false)
+        {
+            string type = httpRequest.Headers != null && httpRequest.Headers.ContainsKey("Accept") && !replace
+                ? $"{httpRequest.Headers["Accept"]},{contentType}"
+                : contentType;
+
+            return httpRequest.WithHeader("Accept", type);
+        }
+
+        /// <summary>
+        /// Sets the content type that the requester can interpret to be application/json. By default, this method
+        /// appends multiple AcceptingResponseContentType calls to one another. If you wish to change this behavior,
+        /// set the <see cref="replace"/> parameter to true.
+        /// </summary>
+        /// <param name="httpRequest">The http request to set the Accept header against.</param>
+        /// <param name="replace">Whether to replace the header instead of adding to it.</param>
+        /// <returns>The current <see cref="MoogieHttpRequest"/>.</returns>
+        public static MoogieHttpRequest AcceptingJsonResponseContentType(this MoogieHttpRequest httpRequest,
+            bool replace = false) => httpRequest.AcceptingResponseContentType("application/json", replace);
     }
 
     /// <summary>
@@ -111,15 +138,19 @@ namespace Moogie.Http
     /// </summary>
     public static class MoogieHttpRequestActionExtensions
     {
+        private static MoogieHttpRequest SetRequestMethod(this MoogieHttpRequest httpRequest, HttpMethod method)
+        {
+            httpRequest.HttpMethod = method;
+            return httpRequest;
+        }
+
         /// <summary>
         /// Sets the request method to Get.
         /// </summary>
         /// <param name="httpRequest">The http request to set the method against.</param>
         /// <returns>The current <see cref="MoogieHttpRequest"/>.</returns>
-        public static MoogieHttpRequest Get(this MoogieHttpRequest httpRequest)
-        {
-            return httpRequest;
-        }
+        public static MoogieHttpRequest AsAGet(this MoogieHttpRequest httpRequest)
+            => httpRequest.SetRequestMethod(HttpMethod.Get);
     }
 
     /// <summary>
@@ -130,9 +161,6 @@ namespace Moogie.Http
         private static async Task<HttpResponseMessage> MakeRequest(this MoogieHttpRequest httpRequest)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, httpRequest.Uri);
-
-            if (!string.IsNullOrWhiteSpace(httpRequest.UserAgent))
-                request.Headers.Add("User-Agent", httpRequest.UserAgent);
 
             if (httpRequest.Headers != null)
                 foreach (var header in httpRequest.Headers)

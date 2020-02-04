@@ -12,7 +12,7 @@ namespace Moogie.Http.Tests.Unit.HeaderExtensionsTests
 
             await MoogieHttpRequest
                 .WithHeader("Authorization", "Bearer foo-bar")
-                .Get()
+                .AsAGet()
                 .EnsureResponseSuccessful();
         }
 
@@ -24,7 +24,7 @@ namespace Moogie.Http.Tests.Unit.HeaderExtensionsTests
             await MoogieHttpRequest
                 .WithHeader("Authorization", "Bearer foo")
                 .WithHeader("Authorization", "Bearer bar")
-                .Get()
+                .AsAGet()
                 .EnsureResponseSuccessful();
         }
     }
