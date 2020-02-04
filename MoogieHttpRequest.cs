@@ -15,7 +15,7 @@ namespace Moogie.Http
         internal HttpClient HttpClient { get; }
         internal string Uri { get; }
         internal HttpMethod HttpMethod { get; set; } = HttpMethod.Get;
-        internal Dictionary<string, string> QueryParameters { get; set; }
+        internal List<(string Name, string Value)> QueryParameters { get; set; }
         internal Dictionary<string, string> Headers { get; set; }
 
         /// <summary>
@@ -166,9 +166,9 @@ namespace Moogie.Http
             string value)
         {
             if (request.QueryParameters == null)
-                request.QueryParameters = new Dictionary<string, string>();
+                request.QueryParameters = new List<(string, string)>();
 
-            request.QueryParameters[parameterName] = value;
+            request.QueryParameters.Add((parameterName, value));
 
             return request;
         }
@@ -207,7 +207,7 @@ namespace Moogie.Http
             {
                 var queryStringParameters = HttpUtility.ParseQueryString(uri.Query);
                 foreach (var queryParams in request.QueryParameters)
-                    queryStringParameters[queryParams.Key] = queryParams.Value;
+                    queryStringParameters.Add(queryParams.Name, queryParams.Value);
                 uri.Query = queryStringParameters.ToString();
             }
 
