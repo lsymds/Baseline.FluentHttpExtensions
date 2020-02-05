@@ -12,7 +12,7 @@ namespace Moogie.Http.Tests.Unit.HeaderExtensionsTests
 
             await HttpRequest
                 .WithUserAgent("moogie-http")
-                .AsAGet()
+                .AsAGetRequest()
                 .EnsureSuccessStatusCode();
         }
     }

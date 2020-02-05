@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Moogie.Http.Tests.Unit.UrlExtensionTests
+namespace Moogie.Http.Tests.Unit.UrlExtensionsTests
 {
     public class WithQueryParameterTests : UnitTest
     {

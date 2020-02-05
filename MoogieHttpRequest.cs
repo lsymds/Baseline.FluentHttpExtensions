@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -15,8 +19,10 @@ namespace Moogie.Http
         internal HttpClient HttpClient { get; }
         internal string Uri { get; }
         internal HttpMethod HttpMethod { get; set; } = HttpMethod.Get;
-        internal List<(string Name, string Value)> QueryParameters { get; set; }
         internal Dictionary<string, string> Headers { get; set; }
+        internal List<string> PathSegments { get; set; }
+        internal List<(string Name, string Value)> QueryParameters { get; set; }
+        internal Func<Task<HttpContent>> GetBodyContent { get; set; }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="HttpRequest"/> struct with a base URI.
@@ -34,16 +40,9 @@ namespace Moogie.Http
     }
 
     /// <summary>
-    /// Contains any and all general extensions that don't belong in a specific class container.
-    /// </summary>
-    public static class MoogieHttpRequestGeneralExtensions
-    {
-    }
-
-    /// <summary>
     /// Contains any and all extensions related to request headers.
     /// </summary>
-    public static class MoogieHttpRequestHeaderExtensions
+    public static class HeaderExtensions
     {
         /// <summary>
         /// Sets a header for a <see cref="HttpRequest"/> instance.
@@ -56,6 +55,7 @@ namespace Moogie.Http
             string headerName,
             string headerValue)
         {
+            if (string.IsNullOrWhiteSpace(headerName)) throw new ArgumentNullException(nameof(headerName));
             if (request.Headers == null)
                 request.Headers = new Dictionary<string, string>();
 
@@ -151,8 +151,24 @@ namespace Moogie.Http
     /// <summary>
     /// Contains any and all extensions related to URLs.
     /// </summary>
-    public static class MoogieHttpRequestUrlExtensions
+    public static class UrlExtensions
     {
+        /// <summary>
+        /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
+        /// </summary>
+        /// <param name="request">The http request to set the additional path segment against.</param>
+        /// <param name="pathSegment">The actual path segment.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest WithPathSegment(this HttpRequest request, string pathSegment)
+        {
+            if (request.PathSegments == null)
+                request.PathSegments = new List<string>();
+
+            request.PathSegments.Add(pathSegment);
+
+            return request;
+        }
+
         /// <summary>
         /// Adds a query parameter to a <see cref="HttpRequest"/>. If the query parameter is already present,
         /// it is overwritten.
@@ -177,7 +193,7 @@ namespace Moogie.Http
     /// <summary>
     /// Contains any and all extensions related to actions performed on remote endpoints.
     /// </summary>
-    public static class MoogieHttpRequestActionExtensions
+    public static class RequestActionExtensions
     {
         private static HttpRequest SetRequestMethod(this HttpRequest request, HttpMethod method)
         {
@@ -186,18 +202,134 @@ namespace Moogie.Http
         }
 
         /// <summary>
-        /// Sets the request method to Get.
+        /// Sets the request method to GET.
         /// </summary>
         /// <param name="request">The http request to set the method against.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
-        public static HttpRequest AsAGet(this HttpRequest request)
-            => request.SetRequestMethod(HttpMethod.Get);
+        public static HttpRequest AsAGetRequest(this HttpRequest request) => request.SetRequestMethod(HttpMethod.Get);
+
+        /// <summary>
+        /// Sets the request method to POST.
+        /// </summary>
+        /// <param name="request">The http request to set the method against.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest AsAPostRequest(this HttpRequest request) => request.SetRequestMethod(HttpMethod.Post);
+
+        /// <summary>
+        /// Sets the request method to PUT.
+        /// </summary>
+        /// <param name="request">The http request to set the method against.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest AsAPutRequest(this HttpRequest request) => request.SetRequestMethod(HttpMethod.Put);
+
+        /// <summary>
+        /// Sets the request method to PATCH.
+        /// </summary>
+        /// <param name="request">The http request to set the method against.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest AsAPatchRequest(this HttpRequest request) =>
+            request.SetRequestMethod(new HttpMethod("PATCH"));
+
+        /// <summary>
+        /// Sets the request method to DELETE.
+        /// </summary>
+        /// <param name="request">The http request to set the method against.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest AsADeleteRequest(this HttpRequest request) =>
+            request.SetRequestMethod(HttpMethod.Delete);
+
+        /// <summary>
+        /// Sets the request method to TRACE.
+        /// </summary>
+        /// <param name="request">The http request to set the method against.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest AsATraceRequest(this HttpRequest request) =>
+            request.SetRequestMethod(HttpMethod.Trace);
+
+        /// <summary>
+        /// Sets the request method to HEAD.
+        /// </summary>
+        /// <param name="request">The http request to set the method against.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest AsAHeadRequest(this HttpRequest request) => request.SetRequestMethod(HttpMethod.Head);
+
+        /// <summary>
+        /// Sets the request method to OPTION.
+        /// </summary>
+        /// <param name="request">The http request to set the method against.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest AsAnOptionsRequest(this HttpRequest request) =>
+            request.SetRequestMethod(HttpMethod.Options);
+    }
+
+    /// <summary>
+    /// Contains any and all extensions that set a request's body content.
+    /// </summary>
+    public static class BodyContentExtensions
+    {
+        /// <summary>
+        /// Sets the request's body to be that of a stream. This method, like all request body method, evaluates
+        /// when the request is actually performed.
+        /// </summary>
+        /// <param name="request">The http request to set the body against.</param>
+        /// <param name="body">The stream to set as the request body.</param>
+        /// <param name="contentType">The content type to set.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest WithStreamBody(this HttpRequest request, Stream body, string contentType)
+        {
+            var content = new StreamContent(body);
+            content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+
+            request.GetBodyContent = () => Task.FromResult((HttpContent)content);
+
+            return request;
+        }
+
+        /// <summary>
+        /// Sets the request's body to be that of an object with a request body content type of application/json.
+        /// This method, like all request body method, evaluates when the request is actually performed.
+        /// </summary>
+        /// <param name="request">The http request to set the body against.</param>
+        /// <param name="body">The object to serialize and send as JSON.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest WithJsonBody<T>(this HttpRequest request, T body)
+        {
+            if (body == null) throw new ArgumentNullException(nameof(body));
+
+            request.GetBodyContent = async () =>
+            {
+                var stream = new MemoryStream();
+                await JsonSerializer.SerializeAsync(stream, body);
+
+                return new StreamContent(stream);
+            };
+
+            return request;
+        }
+
+        /// <summary>
+        /// Sets the request's body to be that of a string. This method, like all request body method, evaluates
+        /// when the request is actually performed.
+        /// </summary>
+        /// <param name="request">The http request to set the body against.</param>
+        /// <param name="body">The string content to set as the request's body.</param>
+        /// <param name="contentType">The content type to be set.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest WithTextBody(this HttpRequest request, string body, string contentType = "text/plain")
+        {
+            if (body == null) throw new ArgumentNullException(nameof(body));
+            if (string.IsNullOrWhiteSpace(contentType)) throw new ArgumentNullException(nameof(contentType));
+
+            request.GetBodyContent = () =>
+                Task.FromResult((HttpContent) new StringContent(body, Encoding.UTF8, contentType));
+            return request;
+        }
     }
 
     /// <summary>
     /// Contains any and all extensions that physically send a request to a remote endpoint.
     /// </summary>
-    public static class MoogieHttpRequestSendTriggeringExtensions
+    public static class SendTriggeringExtensions
     {
         private static async Task<HttpResponseMessage> MakeRequest(this HttpRequest request)
         {
@@ -206,17 +338,21 @@ namespace Moogie.Http
             if (request.QueryParameters != null)
             {
                 var queryStringParameters = HttpUtility.ParseQueryString(uri.Query);
-                foreach (var queryParams in request.QueryParameters)
-                    queryStringParameters.Add(queryParams.Name, queryParams.Value);
+                foreach (var (name, value) in request.QueryParameters)
+                    queryStringParameters.Add(name, value);
                 uri.Query = queryStringParameters.ToString();
             }
 
-            var actualRequest = new HttpRequestMessage(HttpMethod.Get, uri.Uri);
+            var actualRequest = new HttpRequestMessage(request.HttpMethod, uri.Uri);
 
             // Build headers.
             if (request.Headers != null)
                 foreach (var header in request.Headers)
                     actualRequest.Headers.Add(header.Key, header.Value);
+
+            // Set body.
+            if (request.GetBodyContent != null)
+                actualRequest.Content = await request.GetBodyContent();
 
             return await request.HttpClient.SendAsync(actualRequest);
         }
