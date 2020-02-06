@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <Compile Remove="Moogie.Http.Tests\**" />
-    <Compile Include="..\MoogieHttpRequest.cs">
-      <Link>MoogieHttpRequest.cs</Link>
+    <Compile Include="..\HttpRequest.cs">
+      <Link>HttpRequest.cs</Link>
     </Compile>
   </ItemGroup>
 

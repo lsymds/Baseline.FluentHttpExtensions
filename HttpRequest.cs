@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -51,11 +50,10 @@ namespace Moogie.Http
         /// <param name="headerName">The name of the header to set.</param>
         /// <param name="headerValue">The header value to set.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
-        public static HttpRequest WithRequestHeader(this HttpRequest request,
-            string headerName,
-            string headerValue)
+        public static HttpRequest WithRequestHeader(this HttpRequest request, string headerName, string headerValue)
         {
             if (string.IsNullOrWhiteSpace(headerName)) throw new ArgumentNullException(nameof(headerName));
+
             if (request.Headers == null)
                 request.Headers = new Dictionary<string, string>();
 
@@ -80,8 +78,8 @@ namespace Moogie.Http
         /// <param name="request">The http request to set the UserAgent against.</param>
         /// <param name="userAgent">The user agent to set.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
-        public static HttpRequest WithUserAgent(this HttpRequest request,
-            string userAgent) => request.WithRequestHeader("User-Agent", userAgent);
+        public static HttpRequest WithUserAgent(this HttpRequest request, string userAgent)
+            => request.WithRequestHeader("User-Agent", userAgent);
 
         /// <summary>
         /// Sets the content type that the requester can interpret. By default, this method appends multiple calls of
@@ -111,8 +109,8 @@ namespace Moogie.Http
         /// <param name="request">The http request to set the Accept header against.</param>
         /// <param name="replace">Whether to replace the header instead of adding to it.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
-        public static HttpRequest AcceptingJsonResponseContentType(this HttpRequest request,
-            bool replace = false) => request.AcceptingResponseContentType("application/json", replace);
+        public static HttpRequest AcceptingJsonResponseContentType(this HttpRequest request, bool replace = false) =>
+            request.AcceptingResponseContentType("application/json", replace);
 
         /// <summary>
         /// Sets the content type that the requester can interpret to be application/xml. By default, this method
@@ -122,8 +120,8 @@ namespace Moogie.Http
         /// <param name="request">The http request to set the Accept header against.</param>
         /// <param name="replace">Whether to replace the header instead of adding to it.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
-        public static HttpRequest AcceptingXmlResponseContentType(this HttpRequest request,
-            bool replace = false) => request.AcceptingResponseContentType("application/xml", replace);
+        public static HttpRequest AcceptingXmlResponseContentType(this HttpRequest request, bool replace = false)
+            => request.AcceptingResponseContentType("application/xml", replace);
 
         /// <summary>
         /// Sets the content type that the requester can interpret to be text/plain. By default, this method
@@ -133,8 +131,8 @@ namespace Moogie.Http
         /// <param name="request">The http request to set the Accept header against.</param>
         /// <param name="replace">Whether to replace the header instead of adding to it.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
-        public static HttpRequest AcceptingPlainResponseContentType(this HttpRequest request,
-            bool replace = false) => request.AcceptingResponseContentType("text/plain", replace);
+        public static HttpRequest AcceptingPlainResponseContentType(this HttpRequest request, bool replace = false)
+            => request.AcceptingResponseContentType("text/plain", replace);
 
         /// <summary>
         /// Sets the content type that the requester can interpret to be text/html. By default, this method
@@ -144,8 +142,8 @@ namespace Moogie.Http
         /// <param name="request">The http request to set the Accept header against.</param>
         /// <param name="replace">Whether to replace the header instead of adding to it.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
-        public static HttpRequest AcceptingHtmlResponseContentType(this HttpRequest request,
-            bool replace = false) => request.AcceptingResponseContentType("text/html", replace);
+        public static HttpRequest AcceptingHtmlResponseContentType(this HttpRequest request, bool replace = false)
+            => request.AcceptingResponseContentType("text/html", replace);
     }
 
     /// <summary>
@@ -177,9 +175,7 @@ namespace Moogie.Http
         /// <param name="parameterName">The query parameter's name.</param>
         /// <param name="value">The query parameter's value.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
-        public static HttpRequest WithQueryParameter(this HttpRequest request,
-            string parameterName,
-            string value)
+        public static HttpRequest WithQueryParameter(this HttpRequest request, string parameterName, string value)
         {
             if (request.QueryParameters == null)
                 request.QueryParameters = new List<(string, string)>();
@@ -268,24 +264,6 @@ namespace Moogie.Http
     public static class BodyContentExtensions
     {
         /// <summary>
-        /// Sets the request's body to be that of a stream. This method, like all request body method, evaluates
-        /// when the request is actually performed.
-        /// </summary>
-        /// <param name="request">The http request to set the body against.</param>
-        /// <param name="body">The stream to set as the request body.</param>
-        /// <param name="contentType">The content type to set.</param>
-        /// <returns>The current <see cref="HttpRequest"/>.</returns>
-        public static HttpRequest WithStreamBody(this HttpRequest request, Stream body, string contentType)
-        {
-            var content = new StreamContent(body);
-            content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
-
-            request.GetBodyContent = () => Task.FromResult((HttpContent)content);
-
-            return request;
-        }
-
-        /// <summary>
         /// Sets the request's body to be that of an object with a request body content type of application/json.
         /// This method, like all request body method, evaluates when the request is actually performed.
         /// </summary>
@@ -298,8 +276,12 @@ namespace Moogie.Http
 
             request.GetBodyContent = async () =>
             {
+                // No, I don't need to have a using statement. StreamContent will automatically dispose of it when it
+                // goes out of scope.
                 var stream = new MemoryStream();
+
                 await JsonSerializer.SerializeAsync(stream, body);
+                stream.Seek(0, SeekOrigin.Begin);
 
                 return new StreamContent(stream);
             };
@@ -322,6 +304,7 @@ namespace Moogie.Http
 
             request.GetBodyContent = () =>
                 Task.FromResult((HttpContent) new StringContent(body, Encoding.UTF8, contentType));
+
             return request;
         }
     }
