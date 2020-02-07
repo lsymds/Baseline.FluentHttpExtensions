@@ -85,7 +85,7 @@ namespace Moogie.Http.Tests.Unit.HeaderExtensionsTests
         private (IReturnsResult<HttpMessageHandler>, HttpRequest) CreateBaseRequest()
         {
             var mockMessageHandler = new Mock<HttpMessageHandler>();
-            var handlerResult = ConfigureMessageHandlerResult(mockMessageHandler);
+            var handlerResult = ConfigureMessageHandlerResultSuccess(mockMessageHandler);
             var request = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
 
             return (handlerResult, request);

@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -18,18 +19,37 @@ namespace Moogie.Http.Tests.Unit
         protected UnitTest()
         {
             var mockMessageHandler = new Mock<HttpMessageHandler>();
-            MessageHandlerResult = ConfigureMessageHandlerResult(mockMessageHandler);
+            MessageHandlerResult = ConfigureMessageHandlerResultSuccess(mockMessageHandler);
             HttpRequest = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
         }
 
-        protected IReturnsResult<HttpMessageHandler> ConfigureMessageHandlerResult(
+        protected IReturnsResult<HttpMessageHandler> ConfigureMessageHandlerResultSuccess(
+            Mock<HttpMessageHandler> messageHandler,
+            string body = "",
+            string contentType = "application/json")
+        {
+            var response = new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(body, Encoding.UTF8, contentType)
+            };
+
+            return messageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
+                .Returns(Task.FromResult(response));
+        }
+
+        protected IReturnsResult<HttpMessageHandler> ConfigureMessageHandlerResultFailure(
             Mock<HttpMessageHandler> messageHandler)
             => messageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync",
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>())
-                .Returns(Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
+                .Returns(Task.FromResult(new HttpResponseMessage(HttpStatusCode.Forbidden)));
 
         protected void OnRequestMade(Action<HttpRequestMessage> handler)
             => OnRequestMade(handler, MessageHandlerResult);

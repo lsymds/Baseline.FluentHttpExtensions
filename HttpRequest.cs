@@ -276,8 +276,8 @@ namespace Moogie.Http
 
             request.GetBodyContent = async () =>
             {
-                // No, I don't need to have a using statement. StreamContent will automatically dispose of it when it
-                // goes out of scope.
+                // No, I don't need to have a using statement. StreamContent will automatically dispose of it when
+                // .Dispose() is called on it.
                 var stream = new MemoryStream();
 
                 await JsonSerializer.SerializeAsync(stream, body);
@@ -348,8 +348,46 @@ namespace Moogie.Http
         /// <returns>An awaitable task.</returns>
         public static async Task EnsureSuccessStatusCode(this HttpRequest request)
         {
-            var response = await request.MakeRequest();
-            response.EnsureSuccessStatusCode();
+            using (var response = await request.MakeRequest())
+                response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Makes the request and reads the response as a string. This method first ensures that the status code
+        /// returned is a successful one.
+        /// </summary>
+        /// <param name="request">The configured request to make.</param>
+        /// <returns>An awaitable task yielding the response as a string.</returns>
+        public static async Task<string> ReadResponseAsString(this HttpRequest request)
+        {
+            using (var response = await request.MakeRequest())
+            {
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
+
+        /// <summary>
+        /// Makes the request and deserializes the JSON response into an object. This method first ensures that the
+        /// status code returned is a successful one.
+        /// </summary>
+        /// <param name="request">The configured request to make.</param>
+        /// <typeparam name="T">The type to deserialize the JSON into.</typeparam>
+        /// <returns>An awaitable task yielding the deserialized object.</returns>
+        public static async Task<T> ReadJsonResponseAs<T>(this HttpRequest request)
+        {
+            using (var response = await request.MakeRequest())
+            {
+                response.EnsureSuccessStatusCode();
+
+                var stream = await response.Content.ReadAsStreamAsync();
+                stream.Seek(0, SeekOrigin.Begin);
+
+                return await JsonSerializer.DeserializeAsync<T>(stream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
         }
     }
 }
