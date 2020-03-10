@@ -29,7 +29,9 @@ namespace Moogie.Http
         /// Initialises a new instance of the <see cref="HttpRequest"/> struct with a base URI.
         /// </summary>
         /// <param name="uri">The base URI to make the request against.</param>
-        public HttpRequest(string uri) => ConfigureProperties(uri);
+        public HttpRequest(string uri) : this(uri, null)
+        {
+        }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="HttpRequest"/> struct with a base URI and an optional,
@@ -37,16 +39,14 @@ namespace Moogie.Http
         /// </summary>
         /// <param name="uri">The base URI to make the request against.</param>
         /// <param name="httpClient">The underlying HttpClient to use to make the request.</param>
-        public HttpRequest(string uri, HttpClient httpClient) => ConfigureProperties(uri, httpClient);
-
-        private void ConfigureProperties(string uri, HttpClient client = default)
+        public HttpRequest(string uri, HttpClient httpClient = default)
         {
             Uri = uri;
 
-            if (client == null && _newClientInstance == null)
+            if (httpClient == null && _newClientInstance == null)
                 _newClientInstance = new HttpClient();
 
-            HttpClient = client ?? _newClientInstance;
+            HttpClient = httpClient ?? _newClientInstance;
         }
     }
 
