@@ -15,6 +15,8 @@ namespace Moogie.Http
     /// </summary>
     public class HttpRequest
     {
+        private static HttpClient _newClientInstance;
+
         internal HttpClient HttpClient { get; }
         internal string Uri { get; }
         internal HttpMethod HttpMethod { get; set; } = HttpMethod.Get;
@@ -27,15 +29,27 @@ namespace Moogie.Http
         /// Initialises a new instance of the <see cref="HttpRequest"/> struct with a base URI.
         /// </summary>
         /// <param name="uri">The base URI to make the request against.</param>
-        public HttpRequest(string uri) => Uri = uri;
+        public HttpRequest(string uri)
+        {
+            Uri = uri;
+
+            if (_newClientInstance == null)
+                _newClientInstance = new HttpClient();
+
+            HttpClient = _newClientInstance;
+        }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="HttpRequest"/> struct with a base URI and an underlying
-        /// <see cref="HttpClient"/> instance to use.
+        /// Initialises a new instance of the <see cref="HttpRequest"/> struct with a base URI and an optional,
+        /// underlying <see cref="HttpClient"/> instance to use.
         /// </summary>
         /// <param name="uri">The base URI to make the request against.</param>
         /// <param name="httpClient">The underlying HttpClient to use to make the request.</param>
-        public HttpRequest(string uri, HttpClient httpClient) : this(uri) => HttpClient = httpClient;
+        public HttpRequest(string uri, HttpClient httpClient) : this(uri)
+        {
+            if (httpClient != null)
+                HttpClient = httpClient;
+        }
     }
 
     /// <summary>
@@ -389,5 +403,84 @@ namespace Moogie.Http
                 });
             }
         }
+    }
+
+    /// <summary>
+    /// Contains any and all extensions that take a string (hopefully a url) and convert it into the fluent
+    /// <see cref="HttpRequest"/> builder.
+    /// </summary>
+    public static class StringToHttpRequestExtensions
+    {
+        /// <summary>
+        /// Converts a string URL into a GET HTTP request.
+        /// </summary>
+        /// <param name="url">The url defined in a string to create a request from.</param>
+        /// <param name="client">Optional HttpClient to use.</param>
+        /// <returns>A <see cref="HttpRequest"/> instance.</returns>
+        public static HttpRequest AsAGetRequest(this string url, HttpClient client = default)
+            => new HttpRequest(url, client).AsAGetRequest();
+
+        /// <summary>
+        /// Converts a string URL into a POST HTTP request.
+        /// </summary>
+        /// <param name="url">The url defined in a string to create a request from.</param>
+        /// <param name="client">Optional HttpClient to use.</param>
+        /// <returns>A <see cref="HttpRequest"/> instance.</returns>
+        public static HttpRequest AsAPostRequest(this string url, HttpClient client = default)
+            => new HttpRequest(url, client).AsAPostRequest();
+
+        /// <summary>
+        /// Converts a string URL into a PUT HTTP request.
+        /// </summary>
+        /// <param name="url">The url defined in a string to create a request from.</param>
+        /// <param name="client">Optional HttpClient to use.</param>
+        /// <returns>A <see cref="HttpRequest"/> instance.</returns>
+        public static HttpRequest AsAPutRequest(this string url, HttpClient client = default)
+            => new HttpRequest(url, client).AsAPutRequest();
+
+        /// <summary>
+        /// Converts a string URL into a PATCH HTTP request.
+        /// </summary>
+        /// <param name="url">The url defined in a string to create a request from.</param>
+        /// <param name="client">Optional HttpClient to use.</param>
+        /// <returns>A <see cref="HttpRequest"/> instance.</returns>
+        public static HttpRequest AsAPatchRequest(this string url, HttpClient client = default)
+            => new HttpRequest(url, client).AsAPatchRequest();
+
+        /// <summary>
+        /// Converts a string URL into a DELETE HTTP request.
+        /// </summary>
+        /// <param name="url">The url defined in a string to create a request from.</param>
+        /// <param name="client">Optional HttpClient to use.</param>
+        /// <returns>A <see cref="HttpRequest"/> instance.</returns>
+        public static HttpRequest AsADeleteRequest(this string url, HttpClient client = default)
+            => new HttpRequest(url, client).AsADeleteRequest();
+
+        /// <summary>
+        /// Converts a string URL into a TRACE HTTP request.
+        /// </summary>
+        /// <param name="url">The url defined in a string to create a request from.</param>
+        /// <param name="client">Optional HttpClient to use.</param>
+        /// <returns>A <see cref="HttpRequest"/> instance.</returns>
+        public static HttpRequest AsATraceRequest(this string url, HttpClient client = default)
+            => new HttpRequest(url, client).AsATraceRequest();
+
+        /// <summary>
+        /// Converts a string URL into a HEAD HTTP request.
+        /// </summary>
+        /// <param name="url">The url defined in a string to create a request from.</param>
+        /// <param name="client">Optional HttpClient to use.</param>
+        /// <returns>A <see cref="HttpRequest"/> instance.</returns>
+        public static HttpRequest AsAHeadRequest(this string url, HttpClient client = default)
+            => new HttpRequest(url, client).AsAHeadRequest();
+
+        /// <summary>
+        /// Converts a string URL into a OPTIONS HTTP request.
+        /// </summary>
+        /// <param name="url">The url defined in a string to create a request from.</param>
+        /// <param name="client">Optional HttpClient to use.</param>
+        /// <returns>A <see cref="HttpRequest"/> instance.</returns>
+        public static HttpRequest AsAnOptionsRequest(this string url, HttpClient client = default)
+            => new HttpRequest(url, client).AsAnOptionsRequest();
     }
 }

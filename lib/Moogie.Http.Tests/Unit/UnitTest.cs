@@ -12,15 +12,17 @@ namespace Moogie.Http.Tests.Unit
 {
     public abstract class UnitTest
     {
+        private Mock<HttpMessageHandler> _messageHandler = new Mock<HttpMessageHandler>();
         protected const string RequestUrl = "https://www.google.com";
+        protected HttpClient HttpClient;
         protected HttpRequest HttpRequest { get; }
         protected IReturnsResult<HttpMessageHandler> MessageHandlerResult { get; private set; }
 
         protected UnitTest()
         {
-            var mockMessageHandler = new Mock<HttpMessageHandler>();
-            MessageHandlerResult = ConfigureMessageHandlerResultSuccess(mockMessageHandler);
-            HttpRequest = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
+            HttpClient = new HttpClient(_messageHandler.Object);
+            MessageHandlerResult = ConfigureMessageHandlerResultSuccess(_messageHandler);
+            HttpRequest = new HttpRequest(RequestUrl, HttpClient);
         }
 
         protected IReturnsResult<HttpMessageHandler> ConfigureMessageHandlerResultSuccess(
