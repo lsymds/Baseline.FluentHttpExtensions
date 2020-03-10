@@ -17,8 +17,8 @@ namespace Moogie.Http
     {
         private static HttpClient _newClientInstance;
 
-        internal HttpClient HttpClient { get; }
-        internal string Uri { get; }
+        internal HttpClient HttpClient { get; private set;  }
+        internal string Uri { get; private set;  }
         internal HttpMethod HttpMethod { get; set; } = HttpMethod.Get;
         internal Dictionary<string, string> Headers { get; set; }
         internal List<string> PathSegments { get; set; }
@@ -29,15 +29,7 @@ namespace Moogie.Http
         /// Initialises a new instance of the <see cref="HttpRequest"/> struct with a base URI.
         /// </summary>
         /// <param name="uri">The base URI to make the request against.</param>
-        public HttpRequest(string uri)
-        {
-            Uri = uri;
-
-            if (_newClientInstance == null)
-                _newClientInstance = new HttpClient();
-
-            HttpClient = _newClientInstance;
-        }
+        public HttpRequest(string uri) => ConfigureProperties(uri);
 
         /// <summary>
         /// Initialises a new instance of the <see cref="HttpRequest"/> struct with a base URI and an optional,
@@ -45,10 +37,18 @@ namespace Moogie.Http
         /// </summary>
         /// <param name="uri">The base URI to make the request against.</param>
         /// <param name="httpClient">The underlying HttpClient to use to make the request.</param>
-        public HttpRequest(string uri, HttpClient httpClient) : this(uri)
+        public HttpRequest(string uri, HttpClient httpClient) => ConfigureProperties(uri, httpClient);
+
+        private void ConfigureProperties(string uri, HttpClient client = default)
         {
-            if (httpClient != null)
-                HttpClient = httpClient;
+            Uri = uri;
+            HttpClient = client;
+            if (client != null) return;
+
+            if (_newClientInstance == null)
+                _newClientInstance = new HttpClient();
+
+            HttpClient = _newClientInstance;
         }
     }
 

@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <Folder Include="EndToEndTests" />
-    <Folder Include="Unit\GeneralExtensionsTests" />
   </ItemGroup>
 
 </Project>
