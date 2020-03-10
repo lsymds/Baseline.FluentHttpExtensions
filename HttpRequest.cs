@@ -339,6 +339,11 @@ namespace Moogie.Http
                     queryStringParameters.Add(name, value);
                 uri.Query = queryStringParameters.ToString();
             }
+            if (request.PathSegments != null)
+            {
+                uri.Path += string.Join("/", request.PathSegments);
+            }
+
 
             var actualRequest = new HttpRequestMessage(request.HttpMethod, uri.Uri);
 
