@@ -42,13 +42,11 @@ namespace Moogie.Http
         private void ConfigureProperties(string uri, HttpClient client = default)
         {
             Uri = uri;
-            HttpClient = client;
-            if (client != null) return;
 
-            if (_newClientInstance == null)
+            if (client == null && _newClientInstance == null)
                 _newClientInstance = new HttpClient();
 
-            HttpClient = _newClientInstance;
+            HttpClient = client ?? _newClientInstance;
         }
     }
 
@@ -343,7 +341,6 @@ namespace Moogie.Http
             {
                 uri.Path += string.Join("/", request.PathSegments);
             }
-
 
             var actualRequest = new HttpRequestMessage(request.HttpMethod, uri.Uri);
 
