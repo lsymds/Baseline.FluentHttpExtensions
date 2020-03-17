@@ -17,8 +17,8 @@ namespace Moogie.Http
     {
         private static HttpClient _newClientInstance;
 
-        internal HttpClient HttpClient { get; private set;  }
-        internal string Uri { get; private set;  }
+        internal HttpClient HttpClient { get; }
+        internal string Uri { get; }
         internal HttpMethod HttpMethod { get; set; } = HttpMethod.Get;
         internal Dictionary<string, string> Headers { get; set; }
         internal List<string> PathSegments { get; set; }
@@ -106,7 +106,7 @@ namespace Moogie.Http
             string contentType,
             bool replace = false)
         {
-            string type = request.Headers != null && request.Headers.ContainsKey("Accept") && !replace
+            var type = request.Headers != null && request.Headers.ContainsKey("Accept") && !replace
                 ? $"{request.Headers["Accept"]},{contentType}"
                 : contentType;
 
@@ -169,8 +169,73 @@ namespace Moogie.Http
         /// <param name="request">The http request to set the additional path segment against.</param>
         /// <param name="pathSegment">The actual path segment.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest WithPathSegment(this HttpRequest request, short pathSegment)
+            => request.WithPathSegment(pathSegment.ToString());
+
+        /// <summary>
+        /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
+        /// </summary>
+        /// <param name="request">The http request to set the additional path segment against.</param>
+        /// <param name="pathSegment">The actual path segment.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest WithPathSegment(this HttpRequest request, ushort pathSegment)
+            => request.WithPathSegment(pathSegment.ToString());
+
+        /// <summary>
+        /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
+        /// </summary>
+        /// <param name="request">The http request to set the additional path segment against.</param>
+        /// <param name="pathSegment">The actual path segment.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest WithPathSegment(this HttpRequest request, int pathSegment)
+            => request.WithPathSegment(pathSegment.ToString());
+
+        /// <summary>
+        /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
+        /// </summary>
+        /// <param name="request">The http request to set the additional path segment against.</param>
+        /// <param name="pathSegment">The actual path segment.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest WithPathSegment(this HttpRequest request, uint pathSegment)
+            => request.WithPathSegment(pathSegment.ToString());
+
+        /// <summary>
+        /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
+        /// </summary>
+        /// <param name="request">The http request to set the additional path segment against.</param>
+        /// <param name="pathSegment">The actual path segment.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest WithPathSegment(this HttpRequest request, long pathSegment)
+            => request.WithPathSegment(pathSegment.ToString());
+
+        /// <summary>
+        /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
+        /// </summary>
+        /// <param name="request">The http request to set the additional path segment against.</param>
+        /// <param name="pathSegment">The actual path segment.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest WithPathSegment(this HttpRequest request, ulong pathSegment)
+            => request.WithPathSegment(pathSegment.ToString());
+
+        /// <summary>
+        /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
+        /// </summary>
+        /// <param name="request">The http request to set the additional path segment against.</param>
+        /// <param name="pathSegment">The actual path segment.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest WithPathSegment(this HttpRequest request, Guid pathSegment)
+            => request.WithPathSegment(pathSegment.ToString());
+
+        /// <summary>
+        /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
+        /// </summary>
+        /// <param name="request">The http request to set the additional path segment against.</param>
+        /// <param name="pathSegment">The actual path segment.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithPathSegment(this HttpRequest request, string pathSegment)
         {
+            if (string.IsNullOrWhiteSpace(pathSegment)) throw new ArgumentNullException(nameof(pathSegment));
+
             if (request.PathSegments == null)
                 request.PathSegments = new List<string>();
 

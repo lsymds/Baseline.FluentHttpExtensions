@@ -12,12 +12,12 @@ namespace Moogie.Http.Tests.Unit.ActionExtensionsTests
         {
             new object[] { (Func<HttpRequest, HttpRequest>)(x => x.AsAGetRequest()), HttpMethod.Get },
             new object[] { (Func<HttpRequest, HttpRequest>)(x => x.AsAPostRequest()), HttpMethod.Post },
-            new object[] { (Func<HttpRequest, Http.HttpRequest>)(x => x.AsADeleteRequest()), HttpMethod.Delete},
-            new object[] { (Func<HttpRequest, Http.HttpRequest>)(x => x.AsAPutRequest()), HttpMethod.Put},
-            new object[] { (Func<HttpRequest, Http.HttpRequest>)(x => x.AsAPatchRequest()), new HttpMethod("PATCH") },
-            new object[] { (Func<HttpRequest, Http.HttpRequest>)(x => x.AsATraceRequest()), HttpMethod.Trace},
-            new object[] { (Func<HttpRequest, Http.HttpRequest>)(x => x.AsAHeadRequest()), HttpMethod.Head},
-            new object[] { (Func<HttpRequest, Http.HttpRequest>)(x => x.AsAnOptionsRequest()), HttpMethod.Options},
+            new object[] { (Func<HttpRequest, HttpRequest>)(x => x.AsADeleteRequest()), HttpMethod.Delete},
+            new object[] { (Func<HttpRequest, HttpRequest>)(x => x.AsAPutRequest()), HttpMethod.Put},
+            new object[] { (Func<HttpRequest, HttpRequest>)(x => x.AsAPatchRequest()), new HttpMethod("PATCH") },
+            new object[] { (Func<HttpRequest, HttpRequest>)(x => x.AsATraceRequest()), HttpMethod.Trace},
+            new object[] { (Func<HttpRequest, HttpRequest>)(x => x.AsAHeadRequest()), HttpMethod.Head},
+            new object[] { (Func<HttpRequest, HttpRequest>)(x => x.AsAnOptionsRequest()), HttpMethod.Options}
         };
 
         [Theory]
