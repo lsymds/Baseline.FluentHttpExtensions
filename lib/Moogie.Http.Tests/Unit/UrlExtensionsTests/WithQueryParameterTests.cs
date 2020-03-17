@@ -37,5 +37,19 @@ namespace Moogie.Http.Tests.Unit.UrlExtensionsTests
                 .WithQueryParameter("a", "c")
                 .EnsureSuccessStatusCode();
         }
+
+        [Fact]
+        public async Task Invalid_Or_Empty_Query_String_Value_Is_Not_Added()
+        {
+            OnRequestMade(r => Assert.Contains("?b=1&d=3", r.RequestUri.ToString()));
+
+            await HttpRequest
+                .WithQueryParameter("a", null)
+                .WithQueryParameter("b", "1")
+                .WithQueryParameter("c", " ")
+                .WithQueryParameter("d", "3")
+                .WithQueryParameter("e", string.Empty)
+                .EnsureSuccessStatusCode();
+        }
     }
 }

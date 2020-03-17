@@ -257,7 +257,8 @@ namespace Moogie.Http
             if (request.QueryParameters == null)
                 request.QueryParameters = new List<(string, string)>();
 
-            request.QueryParameters.Add((parameterName, value));
+            if (!string.IsNullOrWhiteSpace(value))
+                request.QueryParameters.Add((parameterName, value));
 
             return request;
         }
