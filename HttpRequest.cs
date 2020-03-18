@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -85,6 +86,19 @@ namespace Moogie.Http
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithBearerTokenAuth(this HttpRequest request, string token)
             => request.WithRequestHeader("Authorization", $"Bearer {token.Replace("Bearer ", "")}");
+
+        /// <summary>
+        /// Sets the Authorization header to contain basic authentication.
+        /// </summary>
+        /// <param name="request">The http request to set the Authorization header against.</param>
+        /// <param name="username">Username for basic authentication.</param>
+        /// <param name="password">Password for basic authentication.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest WithBasicAuth(this HttpRequest request, string username, string password)
+        {
+            var encoded = Encoding.UTF8.GetBytes($"{username}:{password}");
+            return request.WithRequestHeader("Authorization", $"Basic {Convert.ToBase64String(encoded)}");
+        }
 
         /// <summary>
         /// Sets the user agent for a <see cref="HttpRequest"/>.
@@ -463,7 +477,12 @@ namespace Moogie.Http
     /// </summary>
     public static class SendTriggeringExtensions
     {
-        private static async Task<HttpResponseMessage> MakeRequest(this HttpRequest request)
+        /// <summary>
+        /// Makes and performs a request using the configured parameters.
+        /// </summary>
+        /// <param name="request">The current <see cref="HttpRequest"/>.</param>
+        /// <returns>The response returned from the actioned request.</returns>
+        public static async Task<HttpResponseMessage> MakeRequest(this HttpRequest request)
         {
             // Build Uri from Uri and query string parameters.
             var uri = new UriBuilder(request.Uri);
