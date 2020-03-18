@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -18,23 +19,36 @@ namespace Moogie.Http.Tests.Unit.UrlExtensionsTests
         [Fact]
         public async Task Multiple_Query_Parameters_Can_Be_Added()
         {
-            OnRequestMade(r => Assert.Contains("?a=b&foo=bar&name=bill", r.RequestUri.ToString()));
+            var guid = Guid.NewGuid();
+
+            OnRequestMade(r => Assert.Contains(
+                $"?a=b&foo=bar&name=bill&fin=0&fon=1&far=10&fun=32&bingo={guid}&bar=3&bus={ulong.MaxValue}",
+                r.RequestUri.ToString()));
 
             await HttpRequest
                 .WithQueryParameter("a", "b")
                 .WithQueryParameter("foo", "bar")
                 .WithQueryParameter("name", "bill")
+                .WithQueryParameter("fin", 0)
+                .WithQueryParameter("fon", (uint)1)
+                .WithQueryParameter("far", (ushort)10)
+                .WithQueryParameter("fun", (long)32)
+                .WithQueryParameter("bingo", guid)
+                .WithQueryParameter("bar", (short)3)
+                .WithQueryParameter("bus", ulong.MaxValue)
                 .EnsureSuccessStatusCode();
         }
 
         [Fact]
         public async Task Can_Add_Same_Parameter_More_Than_Once()
         {
-            OnRequestMade(r => Assert.Contains("?a=b&a=c", r.RequestUri.ToString()));
+            OnRequestMade(r => Assert.Contains("?a=b&a=c&c=5&c=55", r.RequestUri.ToString()));
 
             await HttpRequest
                 .WithQueryParameter("a", "b")
                 .WithQueryParameter("a", "c")
+                .WithQueryParameter("c", 5)
+                .WithQueryParameter("c", (ushort)55)
                 .EnsureSuccessStatusCode();
         }
 
