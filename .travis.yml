@@ -3,5 +3,5 @@ mono: none
 dotnet: 3.1.2
 
 script:
-- dotnet build
+- dotnet build lib/Moogie.Http.sln
 - dotnet test lib/Moogie.Http.Tests/Moogie.Http.Tests.csproj
