@@ -13,4 +13,3 @@ requirements is to keep external dependencies to a minimum, or where a fully fea
 
 If you have no qualms about using external dependencies in your project, we provide an official NuGet package too.
 
-Moogie.Http is under active development, so I wouldn't use it just yet!
