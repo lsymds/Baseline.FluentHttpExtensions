@@ -20,8 +20,4 @@
     <ProjectReference Include="..\Moogie.Http.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EndToEndTests" />
-  </ItemGroup>
-
 </Project>

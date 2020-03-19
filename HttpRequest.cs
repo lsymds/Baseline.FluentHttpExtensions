@@ -5,6 +5,7 @@ using System.Buffers.Text;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -446,7 +447,10 @@ namespace Moogie.Http
                 await JsonSerializer.SerializeAsync(stream, body);
                 stream.Seek(0, SeekOrigin.Begin);
 
-                return new StreamContent(stream);
+                var content = new StreamContent(stream);
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                return content;
             };
 
             return request;
@@ -520,8 +524,9 @@ namespace Moogie.Http
         /// <returns>An awaitable task.</returns>
         public static async Task EnsureSuccessStatusCode(this HttpRequest request)
         {
-            using (var response = await request.MakeRequest())
-                response.EnsureSuccessStatusCode();
+            using var response = await request.MakeRequest();
+
+            response.EnsureSuccessStatusCode();
         }
 
         /// <summary>
@@ -532,11 +537,10 @@ namespace Moogie.Http
         /// <returns>An awaitable task yielding the response as a string.</returns>
         public static async Task<string> ReadResponseAsString(this HttpRequest request)
         {
-            using (var response = await request.MakeRequest())
-            {
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync();
-            }
+            using var response = await request.MakeRequest();
+
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
         }
 
         /// <summary>
@@ -548,18 +552,16 @@ namespace Moogie.Http
         /// <returns>An awaitable task yielding the deserialized object.</returns>
         public static async Task<T> ReadJsonResponseAs<T>(this HttpRequest request)
         {
-            using (var response = await request.MakeRequest())
+            using var response = await request.MakeRequest();
+            response.EnsureSuccessStatusCode();
+
+            var stream = await response.Content.ReadAsStreamAsync();
+            stream.Seek(0, SeekOrigin.Begin);
+
+            return await JsonSerializer.DeserializeAsync<T>(stream, new JsonSerializerOptions
             {
-                response.EnsureSuccessStatusCode();
-
-                var stream = await response.Content.ReadAsStreamAsync();
-                stream.Seek(0, SeekOrigin.Begin);
-
-                return await JsonSerializer.DeserializeAsync<T>(stream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-            }
+                PropertyNameCaseInsensitive = true
+            });
         }
     }
 
