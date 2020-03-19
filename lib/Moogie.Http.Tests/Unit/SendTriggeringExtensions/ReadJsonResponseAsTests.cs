@@ -2,6 +2,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Moq;
 using Xunit;
+// ReSharper disable NotNullMemberIsNotInitialized
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+#pragma warning disable 8618
 
 namespace Moogie.Http.Tests.Unit.SendTriggeringExtensions
 {

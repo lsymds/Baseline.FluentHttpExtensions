@@ -1,7 +1,6 @@
 ﻿#nullable enable
 
 using System;
-using System.Buffers.Text;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -19,6 +18,7 @@ namespace Moogie.Http
     /// </summary>
     public class HttpRequest
     {
+        // ReSharper disable RedundantDefaultMemberInitializer
         private static HttpClient _newClientInstance = null!;
 
         internal HttpClient HttpClient { get; }
@@ -28,14 +28,7 @@ namespace Moogie.Http
         internal List<string> PathSegments { get; set; } = null!;
         internal List<(string Name, string Value)> QueryParameters { get; set; } = null!;
         internal Func<Task<HttpContent>> GetBodyContent { get; set; } = null!;
-
-        /// <summary>
-        /// Initialises a new instance of the <see cref="HttpRequest"/> struct with a base URI.
-        /// </summary>
-        /// <param name="uri">The base URI to make the request against.</param>
-        public HttpRequest(string uri) : this(uri, null)
-        {
-        }
+        // ReSharper restore RedundantDefaultMemberInitializer
 
         /// <summary>
         /// Initialises a new instance of the <see cref="HttpRequest"/> struct with a base URI and an optional,

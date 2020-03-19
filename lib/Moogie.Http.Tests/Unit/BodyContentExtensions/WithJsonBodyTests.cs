@@ -2,6 +2,8 @@ using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
+// ReSharper disable NotNullMemberIsNotInitialized
+#pragma warning disable 8618
 
 namespace Moogie.Http.Tests.Unit.BodyContentExtensions
 {

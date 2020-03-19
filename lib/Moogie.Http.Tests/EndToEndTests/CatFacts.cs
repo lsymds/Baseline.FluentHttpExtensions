@@ -3,6 +3,9 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable NotNullMemberIsNotInitialized
+#pragma warning disable 8618
 
 namespace Moogie.Http.Tests.EndToEndTests
 {
