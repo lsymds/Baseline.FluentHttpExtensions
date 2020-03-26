@@ -1,31 +1,40 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Moogie.Http.Tests\**" />
-    <Compile Include="..\HttpRequest.cs">
-      <Link>HttpRequest.cs</Link>
-    </Compile>
-  </ItemGroup>
+    <PropertyGroup>
+        <PackageId>Moogie.Http</PackageId>
+        <PackageTags>http client;system.net.httpclient;httpclient;http abstractions;easy;simple;moogie;moogie.http</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Authors>l_symonds</Authors>
+        <RepositoryUrl>https://github.com/lsymonds/Moogie.Http</RepositoryUrl>
+        <PackageDescription>Moogie.Http is a single file fluent interface for the System.Net.Http.HttpClient class, now available as a NuGet package!</PackageDescription>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Remove="Moogie.Http.Tests\**" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="Moogie.Http.Tests\**" />
+        <Compile Include="..\HttpRequest.cs">
+            <Link>HttpRequest.cs</Link>
+        </Compile>
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Moogie.Http.Tests\**" />
-    <None Remove=".editorconfig" />
-    <None Remove=".gitignore" />
-    <None Remove="LICENSE" />
-    <None Remove="README.md" />
-  </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Remove="Moogie.Http.Tests\**" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="4.7.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="Moogie.Http.Tests\**" />
+        <None Remove=".editorconfig" />
+        <None Remove=".gitignore" />
+        <None Remove="LICENSE" />
+        <None Remove="README.md" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.Text.Json" Version="4.7.0" />
+    </ItemGroup>
 
 </Project>
