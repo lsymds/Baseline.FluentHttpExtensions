@@ -437,7 +437,7 @@ namespace Moogie.Http
                 // .Dispose() is called on it.
                 var stream = new MemoryStream();
 
-                await JsonSerializer.SerializeAsync(stream, body);
+                await JsonSerializer.SerializeAsync(stream, body).ConfigureAwait(false);
                 stream.Seek(0, SeekOrigin.Begin);
 
                 var content = new StreamContent(stream);
@@ -506,7 +506,7 @@ namespace Moogie.Http
             if (request.GetBodyContent != null)
                 actualRequest.Content = await request.GetBodyContent();
 
-            return await request.HttpClient.SendAsync(actualRequest);
+            return await request.HttpClient.SendAsync(actualRequest).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -517,7 +517,7 @@ namespace Moogie.Http
         /// <returns>An awaitable task.</returns>
         public static async Task EnsureSuccessStatusCode(this HttpRequest request)
         {
-            using var response = await request.MakeRequest();
+            using var response = await request.MakeRequest().ConfigureAwait(false);
 
             response.EnsureSuccessStatusCode();
         }
@@ -530,10 +530,10 @@ namespace Moogie.Http
         /// <returns>An awaitable task yielding the response as a string.</returns>
         public static async Task<string> ReadResponseAsString(this HttpRequest request)
         {
-            using var response = await request.MakeRequest();
+            using var response = await request.MakeRequest().ConfigureAwait(false);
 
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
+            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -545,16 +545,16 @@ namespace Moogie.Http
         /// <returns>An awaitable task yielding the deserialized object.</returns>
         public static async Task<T> ReadJsonResponseAs<T>(this HttpRequest request)
         {
-            using var response = await request.MakeRequest();
+            using var response = await request.MakeRequest().ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
 
-            var stream = await response.Content.ReadAsStreamAsync();
+            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             stream.Seek(0, SeekOrigin.Begin);
 
             return await JsonSerializer.DeserializeAsync<T>(stream, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            });
+            }).ConfigureAwait(false);
         }
     }
 
