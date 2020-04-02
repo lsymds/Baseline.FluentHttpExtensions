@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -18,16 +16,15 @@ namespace Moogie.Http
     /// </summary>
     public class HttpRequest
     {
-        // ReSharper disable RedundantDefaultMemberInitializer
-        private static HttpClient _newClientInstance = null!;
+        private static HttpClient _newClientInstance;
 
         internal HttpClient HttpClient { get; }
         internal string Uri { get; }
         internal HttpMethod HttpMethod { get; set; } = HttpMethod.Get;
-        internal Dictionary<string, string> Headers { get; set; } = null!;
-        internal List<string> PathSegments { get; set; } = null!;
-        internal List<(string Name, string Value)> QueryParameters { get; set; } = null!;
-        internal Func<Task<HttpContent>> GetBodyContent { get; set; } = null!;
+        internal Dictionary<string, string> Headers { get; set; }
+        internal List<string> PathSegments { get; set; }
+        internal List<(string Name, string Value)> QueryParameters { get; set; }
+        internal Func<Task<HttpContent>> GetBodyContent { get; set; }
         // ReSharper restore RedundantDefaultMemberInitializer
 
         /// <summary>
@@ -36,7 +33,7 @@ namespace Moogie.Http
         /// </summary>
         /// <param name="uri">The base URI to make the request against.</param>
         /// <param name="httpClient">The underlying HttpClient to use to make the request.</param>
-        public HttpRequest(string uri, HttpClient? httpClient = default)
+        public HttpRequest(string uri, HttpClient httpClient = default)
         {
             Uri = uri;
 
@@ -325,13 +322,13 @@ namespace Moogie.Http
             => request.WithQueryParameter(parameterName, value.ToString());
 
         /// <summary>
-        /// Adds a query parameter to a <see cref="HttpRequest"/>. I
+        /// Adds a query parameter to a <see cref="HttpRequest"/>.
         /// </summary>
         /// <param name="request">The http request to set the query parameter against.</param>
         /// <param name="parameterName">The query parameter's name.</param>
         /// <param name="value">The query parameter's value.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
-        public static HttpRequest WithQueryParameter(this HttpRequest request, string parameterName, string? value)
+        public static HttpRequest WithQueryParameter(this HttpRequest request, string parameterName, string value)
         {
             if (request.QueryParameters == null)
                 request.QueryParameters = new List<(string, string)>();
@@ -517,9 +514,8 @@ namespace Moogie.Http
         /// <returns>An awaitable task.</returns>
         public static async Task EnsureSuccessStatusCode(this HttpRequest request)
         {
-            using var response = await request.MakeRequest().ConfigureAwait(false);
-
-            response.EnsureSuccessStatusCode();
+            using (var response = await request.MakeRequest().ConfigureAwait(false))
+                response.EnsureSuccessStatusCode();
         }
 
         /// <summary>
@@ -530,10 +526,11 @@ namespace Moogie.Http
         /// <returns>An awaitable task yielding the response as a string.</returns>
         public static async Task<string> ReadResponseAsString(this HttpRequest request)
         {
-            using var response = await request.MakeRequest().ConfigureAwait(false);
-
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            using (var response = await request.MakeRequest().ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -545,16 +542,18 @@ namespace Moogie.Http
         /// <returns>An awaitable task yielding the deserialized object.</returns>
         public static async Task<T> ReadJsonResponseAs<T>(this HttpRequest request)
         {
-            using var response = await request.MakeRequest().ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-
-            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            stream.Seek(0, SeekOrigin.Begin);
-
-            return await JsonSerializer.DeserializeAsync<T>(stream, new JsonSerializerOptions
+            using (var response = await request.MakeRequest().ConfigureAwait(false))
             {
-                PropertyNameCaseInsensitive = true
-            }).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+
+                var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                stream.Seek(0, SeekOrigin.Begin);
+
+                return await JsonSerializer.DeserializeAsync<T>(stream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }).ConfigureAwait(false);
+            }
         }
     }
 
@@ -570,7 +569,7 @@ namespace Moogie.Http
         /// <param name="url">The url defined in a string to create a request from.</param>
         /// <param name="client">Optional HttpClient to use.</param>
         /// <returns>A <see cref="HttpRequest"/> instance.</returns>
-        public static HttpRequest AsAGetRequest(this string url, HttpClient? client = default)
+        public static HttpRequest AsAGetRequest(this string url, HttpClient client = default)
             => new HttpRequest(url, client).AsAGetRequest();
 
         /// <summary>
@@ -579,7 +578,7 @@ namespace Moogie.Http
         /// <param name="url">The url defined in a string to create a request from.</param>
         /// <param name="client">Optional HttpClient to use.</param>
         /// <returns>A <see cref="HttpRequest"/> instance.</returns>
-        public static HttpRequest AsAPostRequest(this string url, HttpClient? client = default)
+        public static HttpRequest AsAPostRequest(this string url, HttpClient client = default)
             => new HttpRequest(url, client).AsAPostRequest();
 
         /// <summary>
@@ -588,7 +587,7 @@ namespace Moogie.Http
         /// <param name="url">The url defined in a string to create a request from.</param>
         /// <param name="client">Optional HttpClient to use.</param>
         /// <returns>A <see cref="HttpRequest"/> instance.</returns>
-        public static HttpRequest AsAPutRequest(this string url, HttpClient? client = default)
+        public static HttpRequest AsAPutRequest(this string url, HttpClient client = default)
             => new HttpRequest(url, client).AsAPutRequest();
 
         /// <summary>
@@ -597,7 +596,7 @@ namespace Moogie.Http
         /// <param name="url">The url defined in a string to create a request from.</param>
         /// <param name="client">Optional HttpClient to use.</param>
         /// <returns>A <see cref="HttpRequest"/> instance.</returns>
-        public static HttpRequest AsAPatchRequest(this string url, HttpClient? client = default)
+        public static HttpRequest AsAPatchRequest(this string url, HttpClient client = default)
             => new HttpRequest(url, client).AsAPatchRequest();
 
         /// <summary>
@@ -606,7 +605,7 @@ namespace Moogie.Http
         /// <param name="url">The url defined in a string to create a request from.</param>
         /// <param name="client">Optional HttpClient to use.</param>
         /// <returns>A <see cref="HttpRequest"/> instance.</returns>
-        public static HttpRequest AsADeleteRequest(this string url, HttpClient? client = default)
+        public static HttpRequest AsADeleteRequest(this string url, HttpClient client = default)
             => new HttpRequest(url, client).AsADeleteRequest();
 
         /// <summary>
@@ -615,7 +614,7 @@ namespace Moogie.Http
         /// <param name="url">The url defined in a string to create a request from.</param>
         /// <param name="client">Optional HttpClient to use.</param>
         /// <returns>A <see cref="HttpRequest"/> instance.</returns>
-        public static HttpRequest AsATraceRequest(this string url, HttpClient? client = default)
+        public static HttpRequest AsATraceRequest(this string url, HttpClient client = default)
             => new HttpRequest(url, client).AsATraceRequest();
 
         /// <summary>
@@ -624,7 +623,7 @@ namespace Moogie.Http
         /// <param name="url">The url defined in a string to create a request from.</param>
         /// <param name="client">Optional HttpClient to use.</param>
         /// <returns>A <see cref="HttpRequest"/> instance.</returns>
-        public static HttpRequest AsAHeadRequest(this string url, HttpClient? client = default)
+        public static HttpRequest AsAHeadRequest(this string url, HttpClient client = default)
             => new HttpRequest(url, client).AsAHeadRequest();
 
         /// <summary>
@@ -633,7 +632,7 @@ namespace Moogie.Http
         /// <param name="url">The url defined in a string to create a request from.</param>
         /// <param name="client">Optional HttpClient to use.</param>
         /// <returns>A <see cref="HttpRequest"/> instance.</returns>
-        public static HttpRequest AsAnOptionsRequest(this string url, HttpClient? client = default)
+        public static HttpRequest AsAnOptionsRequest(this string url, HttpClient client = default)
             => new HttpRequest(url, client).AsAnOptionsRequest();
     }
 }

@@ -11,6 +11,8 @@ I built this for one reason: to stop repeating myself whenever I'm working on a 
 requirements is to keep external dependencies to a minimum, or where a fully featured request library such as
 `Flurl.Http` feels a little overkill.
 
+This library in its single file and packaged form requires your project to be using .NET Standard 2.0. Where you are dropping the file into your project, you will also need to install the System.Text.Json package. 
+
 ### Getting Started
 
 The entry point to Moogie.Http is the `HttpRequest` class. This class should be initialized and used for one request
