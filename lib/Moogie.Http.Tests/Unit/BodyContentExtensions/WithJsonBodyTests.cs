@@ -19,7 +19,7 @@ namespace Moogie.Http.Tests.Unit.BodyContentExtensions
         public void Null_Argument_Results_In_An_Exception_Being_Thrown()
         {
             // Arrange.
-            void Act() => HttpRequest.WithJsonBody((object)null);
+            void Act() => HttpRequest.WithJsonBody((object)null!);
 
             // Act & Assert.
             Assert.Throws<ArgumentNullException>(Act);

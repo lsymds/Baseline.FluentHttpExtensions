@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -24,8 +25,7 @@ namespace Moogie.Http
         internal Dictionary<string, string> Headers { get; set; }
         internal List<string> PathSegments { get; set; }
         internal List<(string Name, string Value)> QueryParameters { get; set; }
-        internal Func<Task<HttpContent>> GetBodyContent { get; set; }
-        // ReSharper restore RedundantDefaultMemberInitializer
+        internal Func<CancellationToken, Task<HttpContent>> GetBodyContent { get; set; }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="HttpRequest"/> struct with a base URI and an optional,
@@ -428,13 +428,13 @@ namespace Moogie.Http
         {
             if (body == null) throw new ArgumentNullException(nameof(body));
 
-            request.GetBodyContent = async () =>
+            request.GetBodyContent = async token =>
             {
                 // No, I don't need to have a using statement. StreamContent will automatically dispose of it when
                 // .Dispose() is called on it.
                 var stream = new MemoryStream();
 
-                await JsonSerializer.SerializeAsync(stream, body).ConfigureAwait(false);
+                await JsonSerializer.SerializeAsync(stream, body, cancellationToken: token).ConfigureAwait(false);
                 stream.Seek(0, SeekOrigin.Begin);
 
                 var content = new StreamContent(stream);
@@ -459,7 +459,7 @@ namespace Moogie.Http
             if (body == null) throw new ArgumentNullException(nameof(body));
             if (string.IsNullOrWhiteSpace(contentType)) throw new ArgumentNullException(nameof(contentType));
 
-            request.GetBodyContent = () =>
+            request.GetBodyContent = _ =>
                 Task.FromResult((HttpContent) new StringContent(body, Encoding.UTF8, contentType));
 
             return request;
@@ -475,8 +475,10 @@ namespace Moogie.Http
         /// Makes and performs a request using the configured parameters.
         /// </summary>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
+        /// <param name="token">The optional cancellation token</param>
         /// <returns>The response returned from the actioned request.</returns>
-        public static async Task<HttpResponseMessage> MakeRequest(this HttpRequest request)
+        public static async Task<HttpResponseMessage> MakeRequest(this HttpRequest request,
+            CancellationToken token = default)
         {
             // Build Uri from Uri and query string parameters.
             var uri = new UriBuilder(request.Uri);
@@ -487,6 +489,7 @@ namespace Moogie.Http
                     queryStringParameters.Add(name, value);
                 uri.Query = queryStringParameters.ToString();
             }
+
             if (request.PathSegments != null)
             {
                 uri.Path += string.Join("/", request.PathSegments);
@@ -501,9 +504,9 @@ namespace Moogie.Http
 
             // Set body.
             if (request.GetBodyContent != null)
-                actualRequest.Content = await request.GetBodyContent();
+                actualRequest.Content = await request.GetBodyContent(token);
 
-            return await request.HttpClient.SendAsync(actualRequest).ConfigureAwait(false);
+            return await request.HttpClient.SendAsync(actualRequest, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -511,10 +514,11 @@ namespace Moogie.Http
         /// will be thrown.
         /// </summary>
         /// <param name="request">The configured request to make.</param>
+        /// <param name="token">The optional cancellation token</param>
         /// <returns>An awaitable task.</returns>
-        public static async Task EnsureSuccessStatusCode(this HttpRequest request)
+        public static async Task EnsureSuccessStatusCode(this HttpRequest request, CancellationToken token = default)
         {
-            using (var response = await request.MakeRequest().ConfigureAwait(false))
+            using (var response = await request.MakeRequest(token).ConfigureAwait(false))
                 response.EnsureSuccessStatusCode();
         }
 
@@ -523,10 +527,12 @@ namespace Moogie.Http
         /// returned is a successful one.
         /// </summary>
         /// <param name="request">The configured request to make.</param>
+        /// <param name="token">The optional cancellation token</param>
         /// <returns>An awaitable task yielding the response as a string.</returns>
-        public static async Task<string> ReadResponseAsString(this HttpRequest request)
+        public static async Task<string> ReadResponseAsString(this HttpRequest request,
+            CancellationToken token = default)
         {
-            using (var response = await request.MakeRequest().ConfigureAwait(false))
+            using (var response = await request.MakeRequest(token).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -538,11 +544,12 @@ namespace Moogie.Http
         /// status code returned is a successful one.
         /// </summary>
         /// <param name="request">The configured request to make.</param>
+        /// <param name="token">The optional cancellation token</param>
         /// <typeparam name="T">The type to deserialize the JSON into.</typeparam>
         /// <returns>An awaitable task yielding the deserialized object.</returns>
-        public static async Task<T> ReadJsonResponseAs<T>(this HttpRequest request)
+        public static async Task<T> ReadJsonResponseAs<T>(this HttpRequest request, CancellationToken token = default)
         {
-            using (var response = await request.MakeRequest().ConfigureAwait(false))
+            using (var response = await request.MakeRequest(token).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
 
@@ -552,7 +559,7 @@ namespace Moogie.Http
                 return await JsonSerializer.DeserializeAsync<T>(stream, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
-                }).ConfigureAwait(false);
+                }, token).ConfigureAwait(false);
             }
         }
     }
