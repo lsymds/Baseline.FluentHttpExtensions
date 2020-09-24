@@ -7,7 +7,7 @@ using Xunit;
 // ReSharper disable NotNullMemberIsNotInitialized
 #pragma warning disable 8618
 
-namespace Moogie.Http.Tests.EndToEndTests
+namespace FluentHttpExtensions.Tests.EndToEndTests
 {
     public class CatFacts
     {

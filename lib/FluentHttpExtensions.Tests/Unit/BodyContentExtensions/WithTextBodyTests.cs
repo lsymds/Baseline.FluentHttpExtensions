@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Moogie.Http.Tests.Unit.BodyContentExtensions
+namespace FluentHttpExtensions.Tests.Unit.BodyContentExtensions
 {
     public class WithTextBodyTests : UnitTest
     {

@@ -2,7 +2,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Moogie.Http.Tests.EndToEndTests
+namespace FluentHttpExtensions.Tests.EndToEndTests
 {
     public class EchoTests
     {

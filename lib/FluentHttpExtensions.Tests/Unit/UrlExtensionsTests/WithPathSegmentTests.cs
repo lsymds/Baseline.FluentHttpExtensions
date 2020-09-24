@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Moogie.Http.Tests.Unit.UrlExtensionsTests
+namespace FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
 {
     public class WithPathSegmentTests : UnitTest
     {

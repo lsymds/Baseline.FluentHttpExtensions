@@ -3,7 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Moogie.Http.Tests.Unit.HeaderExtensionsTests
+namespace FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
 {
     public class WithBasicAuthTests : UnitTest
     {

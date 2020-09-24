@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Moogie.Http
+namespace FluentHttpExtensions
 {
     /// <summary>
     /// Request container that is eventually translated into a HttpWebRequest instance. All extension methods hang off

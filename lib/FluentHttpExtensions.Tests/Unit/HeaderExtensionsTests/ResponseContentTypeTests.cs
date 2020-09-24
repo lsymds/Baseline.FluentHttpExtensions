@@ -5,7 +5,7 @@ using Moq;
 using Moq.Language.Flow;
 using Xunit;
 
-namespace Moogie.Http.Tests.Unit.HeaderExtensionsTests
+namespace FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
 {
     public class ResponseContentTypeTests : UnitTest
     {

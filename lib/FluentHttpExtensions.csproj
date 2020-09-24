@@ -5,27 +5,27 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <PackageId>Moogie.Http</PackageId>
-        <PackageTags>http client;system.net.httpclient;httpclient;http abstractions;easy;simple;moogie;moogie.http</PackageTags>
+        <PackageId>FluentHttpExtensions</PackageId>
+        <PackageTags>http client;system.net.httpclient;httpclient;http abstractions;easy;simple;moogie;FluentHttpExtensions</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Authors>l_symonds</Authors>
-        <RepositoryUrl>https://github.com/lsymonds/Moogie.Http</RepositoryUrl>
-        <PackageDescription>Moogie.Http is a single file fluent interface for the System.Net.Http.HttpClient class, now available as a NuGet package!</PackageDescription>
+        <RepositoryUrl>https://github.com/lsymonds/FluentHttpExtensions</RepositoryUrl>
+        <PackageDescription>FluentHttpExtensions is a single file fluent interface for the System.Net.Http.HttpClient class, now available as a NuGet package!</PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Remove="Moogie.Http.Tests\**" />
+        <Compile Remove="FluentHttpExtensions.Tests\**" />
         <Compile Include="..\HttpRequest.cs">
             <Link>HttpRequest.cs</Link>
         </Compile>
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Remove="Moogie.Http.Tests\**" />
+        <EmbeddedResource Remove="FluentHttpExtensions.Tests\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Moogie.Http.Tests\**" />
+        <None Remove="FluentHttpExtensions.Tests\**" />
         <None Remove=".editorconfig" />
         <None Remove=".gitignore" />
         <None Remove="LICENSE" />

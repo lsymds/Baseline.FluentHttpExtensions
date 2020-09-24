@@ -8,7 +8,7 @@ using Moq;
 using Moq.Language.Flow;
 using Moq.Protected;
 
-namespace Moogie.Http.Tests.Unit
+namespace FluentHttpExtensions.Tests.Unit
 {
     public abstract class UnitTest
     {

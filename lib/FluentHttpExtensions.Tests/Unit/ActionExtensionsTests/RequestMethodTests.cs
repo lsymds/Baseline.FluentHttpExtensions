@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Moogie.Http.Tests.Unit.ActionExtensionsTests
+namespace FluentHttpExtensions.Tests.Unit.ActionExtensionsTests
 {
     public class RequestMethodTests : UnitTest
     {

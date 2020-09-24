@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Moq;
 using Xunit;
 
-namespace Moogie.Http.Tests.Unit.SendTriggeringExtensions
+namespace FluentHttpExtensions.Tests.Unit.SendTriggeringExtensions
 {
     public class ReadResponseAsStringTests : UnitTest
     {

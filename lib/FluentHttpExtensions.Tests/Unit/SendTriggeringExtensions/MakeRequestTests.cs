@@ -2,7 +2,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Moogie.Http.Tests.Unit.SendTriggeringExtensions
+namespace FluentHttpExtensions.Tests.Unit.SendTriggeringExtensions
 {
     public class MakeRequestTests : UnitTest
     {

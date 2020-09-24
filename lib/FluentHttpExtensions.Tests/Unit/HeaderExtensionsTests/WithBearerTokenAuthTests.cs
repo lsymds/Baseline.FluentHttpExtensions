@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Moogie.Http.Tests.Unit.HeaderExtensionsTests
+namespace FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
 {
     public class WithBearerTokenAuthTests : UnitTest
     {

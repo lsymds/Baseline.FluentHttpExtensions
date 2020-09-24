@@ -5,7 +5,7 @@ using Xunit;
 // ReSharper disable NotNullMemberIsNotInitialized
 #pragma warning disable 8618
 
-namespace Moogie.Http.Tests.Unit.BodyContentExtensions
+namespace FluentHttpExtensions.Tests.Unit.BodyContentExtensions
 {
     public class TestBody
     {

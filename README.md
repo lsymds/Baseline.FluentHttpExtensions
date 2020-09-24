@@ -1,21 +1,21 @@
-# Moogie.Http
+# FluentHttpExtensions
 
 > Syntactic sugar in a single file for the `System.Net.Http.HttpClient` class.
 
 ## Introduction
 
-Moogie.Http is a single file fluent interface for the `System.Net.Http.HttpClient` class. This means that you can simply
+FluentHttpExtensions is a single file fluent interface for the `System.Net.Http.HttpClient` class. This means that you can simply
 drop the `MoogieHttpRequest.cs` file into your project and begin making http requests easily and beautifully.
 
 I built this for one reason: to stop repeating myself whenever I'm working on a library or project where one of the
 requirements is to keep external dependencies to a minimum, or where a fully featured request library such as
 `Flurl.Http` feels a little overkill.
 
-This library in its single file and packaged form requires your project to be using .NET Standard 2.0 or above. Where you are dropping the file into your project, you will also need to install the System.Text.Json package. 
+This library in its single file and packaged form requires your project to be using .NET Standard 2.0 or above. Where you are dropping the file into your project, you will also need to install the System.Text.Json package.
 
 ### Getting Started
 
-The entry point to Moogie.Http is the `HttpRequest` class. This class should be initialized and used for one request
+The entry point to FluentHttpExtensions is the `HttpRequest` class. This class should be initialized and used for one request
 only. It has two constructors:
 
 ```
