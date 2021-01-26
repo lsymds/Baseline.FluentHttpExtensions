@@ -11,6 +11,7 @@
         <Authors>l_symonds</Authors>
         <RepositoryUrl>https://github.com/lsymonds/FluentHttpExtensions</RepositoryUrl>
         <PackageDescription>FluentHttpExtensions is a single file fluent interface for the System.Net.Http.HttpClient class, now available as a NuGet package!</PackageDescription>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
