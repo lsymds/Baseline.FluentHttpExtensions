@@ -2,6 +2,11 @@
 
 > Syntactic sugar in a single file for the `System.Net.Http.HttpClient` class.
 
+## Sponsor
+
+Proudly sponsored by BossLabs Ltd (https://bosslabs.co.uk) - they build scalable software
+solutions for businesses of all sizes.
+
 ## Introduction
 
 FluentHttpExtensions is a single file fluent interface for the `System.Net.Http.HttpClient` class. This means that you can simply
