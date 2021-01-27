@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using System.Xml.Serialization;
 
 namespace FluentHttpExtensions
 {
@@ -38,7 +39,9 @@ namespace FluentHttpExtensions
             Uri = uri;
 
             if (httpClient == null && _newClientInstance == null)
+            {
                 _newClientInstance = new HttpClient();
+            }
 
             HttpClient = httpClient ?? _newClientInstance;
         }
@@ -58,10 +61,15 @@ namespace FluentHttpExtensions
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithRequestHeader(this HttpRequest request, string headerName, string headerValue)
         {
-            if (string.IsNullOrWhiteSpace(headerName)) throw new ArgumentNullException(nameof(headerName));
+            if (string.IsNullOrWhiteSpace(headerName))
+            {
+                throw new ArgumentNullException(nameof(headerName));
+            }
 
             if (request.Headers == null)
+            {
                 request.Headers = new Dictionary<string, string>();
+            }
 
             request.Headers[headerName] = headerValue;
 
@@ -109,9 +117,11 @@ namespace FluentHttpExtensions
         /// <param name="contentType">The content type that the requester can interpret.</param>
         /// <param name="replace">Whether to replace the header instead of adding to it.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
-        public static HttpRequest AcceptingResponseContentType(this HttpRequest request,
+        public static HttpRequest AcceptingResponseContentType(
+            this HttpRequest request,
             string contentType,
-            bool replace = false)
+            bool replace = false
+        )
         {
             var type = request.Headers != null && request.Headers.ContainsKey("Accept") && !replace
                 ? $"{request.Headers["Accept"]},{contentType}"
@@ -241,10 +251,15 @@ namespace FluentHttpExtensions
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithPathSegment(this HttpRequest request, string pathSegment)
         {
-            if (string.IsNullOrWhiteSpace(pathSegment)) throw new ArgumentNullException(nameof(pathSegment));
+            if (string.IsNullOrWhiteSpace(pathSegment))
+            {
+                throw new ArgumentNullException(nameof(pathSegment));
+            }
 
             if (request.PathSegments == null)
+            {
                 request.PathSegments = new List<string>();
+            }
 
             request.PathSegments.Add(pathSegment);
 
@@ -331,10 +346,14 @@ namespace FluentHttpExtensions
         public static HttpRequest WithQueryParameter(this HttpRequest request, string parameterName, string value)
         {
             if (request.QueryParameters == null)
+            {
                 request.QueryParameters = new List<(string, string)>();
+            }
 
             if (!string.IsNullOrWhiteSpace(value))
+            {
                 request.QueryParameters.Add((parameterName, value));
+            }
 
             return request;
         }
@@ -426,7 +445,10 @@ namespace FluentHttpExtensions
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithJsonBody<T>(this HttpRequest request, T body)
         {
-            if (body == null) throw new ArgumentNullException(nameof(body));
+            if (body == null)
+            {
+                throw new ArgumentNullException(nameof(body));
+            }
 
             request.GetBodyContent = async token =>
             {
@@ -456,8 +478,15 @@ namespace FluentHttpExtensions
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithTextBody(this HttpRequest request, string body, string contentType = "text/plain")
         {
-            if (body == null) throw new ArgumentNullException(nameof(body));
-            if (string.IsNullOrWhiteSpace(contentType)) throw new ArgumentNullException(nameof(contentType));
+            if (body == null)
+            {
+                throw new ArgumentNullException(nameof(body));
+            }
+
+            if (string.IsNullOrWhiteSpace(contentType))
+            {
+                throw new ArgumentNullException(nameof(contentType));
+            }
 
             request.GetBodyContent = _ =>
                 Task.FromResult((HttpContent) new StringContent(body, Encoding.UTF8, contentType));
@@ -485,8 +514,12 @@ namespace FluentHttpExtensions
             if (request.QueryParameters != null)
             {
                 var queryStringParameters = HttpUtility.ParseQueryString(uri.Query);
+
                 foreach (var (name, value) in request.QueryParameters)
+                {
                     queryStringParameters.Add(name, value);
+                }
+
                 uri.Query = queryStringParameters.ToString();
             }
 
@@ -499,12 +532,18 @@ namespace FluentHttpExtensions
 
             // Build headers.
             if (request.Headers != null)
+            {
                 foreach (var header in request.Headers)
+                {
                     actualRequest.Headers.Add(header.Key, header.Value);
+                }
+            }
 
             // Set body.
             if (request.GetBodyContent != null)
+            {
                 actualRequest.Content = await request.GetBodyContent(token);
+            }
 
             return await request.HttpClient.SendAsync(actualRequest, token).ConfigureAwait(false);
         }
@@ -519,7 +558,9 @@ namespace FluentHttpExtensions
         public static async Task EnsureSuccessStatusCode(this HttpRequest request, CancellationToken token = default)
         {
             using (var response = await request.MakeRequest(token).ConfigureAwait(false))
+            {
                 response.EnsureSuccessStatusCode();
+            }
         }
 
         /// <summary>
@@ -535,7 +576,7 @@ namespace FluentHttpExtensions
             using (var response = await request.MakeRequest(token).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return await response.ReadResponseAsString().ConfigureAwait(false);
             }
         }
 
@@ -544,23 +585,99 @@ namespace FluentHttpExtensions
         /// status code returned is a successful one.
         /// </summary>
         /// <param name="request">The configured request to make.</param>
+        /// <param name="jsonSerializerOptions">Options used to configure the serializer.</param>
         /// <param name="token">The optional cancellation token</param>
         /// <typeparam name="T">The type to deserialize the JSON into.</typeparam>
         /// <returns>An awaitable task yielding the deserialized object.</returns>
-        public static async Task<T> ReadJsonResponseAs<T>(this HttpRequest request, CancellationToken token = default)
+        public static async Task<T> ReadJsonResponseAs<T>(
+            this HttpRequest request,
+            JsonSerializerOptions jsonSerializerOptions = null,
+            CancellationToken token = default
+        )
         {
             using (var response = await request.MakeRequest(token).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
-
-                var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                stream.Seek(0, SeekOrigin.Begin);
-
-                return await JsonSerializer.DeserializeAsync<T>(stream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }, token).ConfigureAwait(false);
+                return await response.ReadJsonResponseAs<T>(jsonSerializerOptions, token).ConfigureAwait(false);
             }
+        }
+
+        /// <summary>
+        /// Makes the request and deserializes the XML response into an object. This method first ensures that the
+        /// status code returned is a successful one.
+        /// </summary>
+        /// <param name="request">The configured request to make.</param>
+        /// <param name="token">The optional cancellation token.</param>
+        /// <returns>The deserialized representation of the XML, or null if it could not be casted.</returns>
+        public static async Task<T> ReadXmlResponseAs<T>(
+            this HttpRequest request,
+            CancellationToken token = default
+        ) where T : class
+        {
+            using (var response = await request.MakeRequest(token).ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+                return await response.ReadXmlResponseAs<T>().ConfigureAwait(false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Contains extension methods related to the <see cref="HttpResponseMessage"/> class returned from the MakeRequest
+    /// endpoint.
+    /// </summary>
+    public static class HttpResponseMessageExtensions
+    {
+        /// <summary>
+        /// Reads the response's content as a string.
+        /// </summary>
+        /// <param name="response">The response message.</param>
+        /// <returns>An awaitable task yielding the response as a string.</returns>
+        public static async Task<string> ReadResponseAsString(
+            this HttpResponseMessage response
+        )
+        {
+            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Deserializes the JSON response into an object.
+        /// </summary>
+        /// <param name="response">The HTTP response.</param>
+        /// <param name="jsonSerializerOptions">Options used to configure the serializer.</param>
+        /// <param name="token">The optional cancellation token</param>
+        /// <typeparam name="T">The type to deserialize the JSON into.</typeparam>
+        /// <returns>An awaitable task yielding the deserialized object.</returns>
+        public static async Task<T> ReadJsonResponseAs<T>(
+            this HttpResponseMessage response,
+            JsonSerializerOptions jsonSerializerOptions = null,
+            CancellationToken token = default
+        )
+        {
+            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            stream.Seek(0, SeekOrigin.Begin);
+
+            return await JsonSerializer.DeserializeAsync<T>(
+                stream,
+                jsonSerializerOptions ?? new JsonSerializerOptions { PropertyNameCaseInsensitive = true },
+                token
+            ).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Deserializes the XML response into an object.
+        /// </summary>
+        /// <param name="response">The response to retrieve the content from and deserialize.</param>
+        /// <returns>The deserialized representation of the XML, or null if it could not be casted.</returns>
+        public static async Task<T> ReadXmlResponseAs<T>(
+            this HttpResponseMessage response
+        ) where T : class
+        {
+            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            stream.Seek(0, SeekOrigin.Begin);
+
+            var xmlSerializer = new XmlSerializer(typeof(T));
+            return xmlSerializer.Deserialize(stream) as T;
         }
     }
 

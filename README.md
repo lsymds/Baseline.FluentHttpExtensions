@@ -133,6 +133,21 @@ ensures that the status code returned is a successful one.
 * `Task<T> ReadJsonResponseAs<T>()` - Performs the request and deserializes the JSON response into an object of type T.
 This method first ensures that the status code returned is a successful one.
 
+* `Task<T> ReadXmlResponseAs<T>()` - Performs the request and Deserializes the XML content of the response into an
+object of type T. This method first ensures that the status code returned is a successful one.
+
+**HttpResponseMessage Methods**
+
+Occasionally, you may want to perform more than one action on a `HttpResponseMessage` returned by the `MakeRequest`
+method. The following methods allow you to do that against a `HttpResponseMessage` saved in a variable multiple times,
+without having to make the request again.
+
+* `Task<string> ReadResponseAsString()` - Reads the content of the response as a string.
+
+* `Task<T> ReadJsonResponseAs<T>()` - Deserializes the JSON content of the response into an object of type T.
+
+* `Task<T> ReadXmlResponseAs<T>()` - Deserializes the XML content of the response into an object of type T.
+
 ## Examples
 
 **Daily cat facts**
