@@ -2,10 +2,6 @@
 
 set -e;
 
-echo "Running pre-commit hook: Attempting to build and test solution.";
-cd src/ && dotnet build && dotnet test;
-echo "Running pre-commit hook: Finished building and testing solution.";
-
 echo "Running pre-commit hook: Generated combined BaselineFluentHttpExtensions.cs file."
 cd Baseline.FluentHttpExtensions.FileCombiner/ && \
     dotnet run && \

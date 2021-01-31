@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Baseline.FluentHttpExtensio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Baseline.FluentHttpExtensions.FileCombiner", "Baseline.FluentHttpExtensions.FileCombiner\Baseline.FluentHttpExtensions.FileCombiner.csproj", "{2D4DBC46-33DC-48D3-B8BF-8C89CE7719CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Baseline.FluentHttpExtensions.CombinedFileTests", "Baseline.FluentHttpExtensions.CombinedFileTests\Baseline.FluentHttpExtensions.CombinedFileTests.csproj", "{FD06F21C-BD07-499E-88FC-A8712D2D7493}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +60,17 @@ Global
 		{2D4DBC46-33DC-48D3-B8BF-8C89CE7719CF}.Release|x64.Build.0 = Release|Any CPU
 		{2D4DBC46-33DC-48D3-B8BF-8C89CE7719CF}.Release|x86.ActiveCfg = Release|Any CPU
 		{2D4DBC46-33DC-48D3-B8BF-8C89CE7719CF}.Release|x86.Build.0 = Release|Any CPU
+		{FD06F21C-BD07-499E-88FC-A8712D2D7493}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD06F21C-BD07-499E-88FC-A8712D2D7493}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD06F21C-BD07-499E-88FC-A8712D2D7493}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FD06F21C-BD07-499E-88FC-A8712D2D7493}.Debug|x64.Build.0 = Debug|Any CPU
+		{FD06F21C-BD07-499E-88FC-A8712D2D7493}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FD06F21C-BD07-499E-88FC-A8712D2D7493}.Debug|x86.Build.0 = Debug|Any CPU
+		{FD06F21C-BD07-499E-88FC-A8712D2D7493}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD06F21C-BD07-499E-88FC-A8712D2D7493}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD06F21C-BD07-499E-88FC-A8712D2D7493}.Release|x64.ActiveCfg = Release|Any CPU
+		{FD06F21C-BD07-499E-88FC-A8712D2D7493}.Release|x64.Build.0 = Release|Any CPU
+		{FD06F21C-BD07-499E-88FC-A8712D2D7493}.Release|x86.ActiveCfg = Release|Any CPU
+		{FD06F21C-BD07-499E-88FC-A8712D2D7493}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
