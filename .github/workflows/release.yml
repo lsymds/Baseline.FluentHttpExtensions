@@ -21,11 +21,11 @@ jobs:
                   tagRegexGroup: 1
             - name: Restore dependencies
               run: |
-                  cd lib/
+                  cd src/
                   dotnet restore
             - name: Publish
               run: |
-                  cd lib/
+                  cd src/
                   dotnet pack -c Release -o ../dist/ -p:PackageVersion=$VERSION
               env:
                   VERSION: ${{ steps.tagName.outputs.tag }}
