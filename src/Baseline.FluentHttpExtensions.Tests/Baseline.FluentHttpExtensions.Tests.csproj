@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Baseline.FluentHttpExtensions.csproj" />
+    <ProjectReference Include="..\Baseline.FluentHttpExtensions\Baseline.FluentHttpExtensions.csproj" />
   </ItemGroup>
 
 </Project>
