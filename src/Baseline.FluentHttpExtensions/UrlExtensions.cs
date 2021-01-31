@@ -15,7 +15,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="pathSegment">The actual path segment.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithPathSegment(this HttpRequest request, short pathSegment)
-            => request.WithPathSegment(pathSegment.ToString());
+        {
+            return request.WithPathSegment(pathSegment.ToString());
+        }
 
         /// <summary>
         /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
@@ -24,7 +26,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="pathSegment">The actual path segment.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithPathSegment(this HttpRequest request, ushort pathSegment)
-            => request.WithPathSegment(pathSegment.ToString());
+        {
+            return request.WithPathSegment(pathSegment.ToString());
+        }
 
         /// <summary>
         /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
@@ -33,7 +37,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="pathSegment">The actual path segment.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithPathSegment(this HttpRequest request, int pathSegment)
-            => request.WithPathSegment(pathSegment.ToString());
+        {
+            return request.WithPathSegment(pathSegment.ToString());
+        }
 
         /// <summary>
         /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
@@ -42,7 +48,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="pathSegment">The actual path segment.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithPathSegment(this HttpRequest request, uint pathSegment)
-            => request.WithPathSegment(pathSegment.ToString());
+        {
+            return request.WithPathSegment(pathSegment.ToString());
+        }
 
         /// <summary>
         /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
@@ -51,7 +59,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="pathSegment">The actual path segment.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithPathSegment(this HttpRequest request, long pathSegment)
-            => request.WithPathSegment(pathSegment.ToString());
+        {
+            return request.WithPathSegment(pathSegment.ToString());
+        }
 
         /// <summary>
         /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
@@ -60,7 +70,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="pathSegment">The actual path segment.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithPathSegment(this HttpRequest request, ulong pathSegment)
-            => request.WithPathSegment(pathSegment.ToString());
+        {
+            return request.WithPathSegment(pathSegment.ToString());
+        }
 
         /// <summary>
         /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
@@ -69,7 +81,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="pathSegment">The actual path segment.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithPathSegment(this HttpRequest request, Guid pathSegment)
-            => request.WithPathSegment(pathSegment.ToString());
+        {
+            return request.WithPathSegment(pathSegment.ToString());
+        }
 
         /// <summary>
         /// Adds an additional path segment to the url specified when instantiating a <see cref="HttpRequest"/>.
@@ -102,7 +116,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="value">The query parameter's value.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithQueryParameter(this HttpRequest request, string parameterName, int value)
-            => request.WithQueryParameter(parameterName, value.ToString());
+        {
+            return request.WithQueryParameter(parameterName, value.ToString());
+        }
 
         /// <summary>
         /// Adds a query parameter to a <see cref="HttpRequest"/>.
@@ -112,7 +128,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="value">The query parameter's value.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithQueryParameter(this HttpRequest request, string parameterName, uint value)
-            => request.WithQueryParameter(parameterName, value.ToString());
+        {
+            return request.WithQueryParameter(parameterName, value.ToString());
+        }
 
         /// <summary>
         /// Adds a query parameter to a <see cref="HttpRequest"/>.
@@ -122,7 +140,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="value">The query parameter's value.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithQueryParameter(this HttpRequest request, string parameterName, short value)
-            => request.WithQueryParameter(parameterName, value.ToString());
+        {
+            return request.WithQueryParameter(parameterName, value.ToString());
+        }
 
         /// <summary>
         /// Adds a query parameter to a <see cref="HttpRequest"/>.
@@ -132,7 +152,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="value">The query parameter's value.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithQueryParameter(this HttpRequest request, string parameterName, ushort value)
-            => request.WithQueryParameter(parameterName, value.ToString());
+        {
+            return request.WithQueryParameter(parameterName, value.ToString());
+        }
 
         /// <summary>
         /// Adds a query parameter to a <see cref="HttpRequest"/>.
@@ -142,7 +164,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="value">The query parameter's value.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithQueryParameter(this HttpRequest request, string parameterName, long value)
-            => request.WithQueryParameter(parameterName, value.ToString());
+        {
+            return request.WithQueryParameter(parameterName, value.ToString());
+        }
 
         /// <summary>
         /// Adds a query parameter to a <see cref="HttpRequest"/>.
@@ -152,7 +176,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="value">The query parameter's value.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithQueryParameter(this HttpRequest request, string parameterName, ulong value)
-            => request.WithQueryParameter(parameterName, value.ToString());
+        {
+            return request.WithQueryParameter(parameterName, value.ToString());
+        }
 
         /// <summary>
         /// Adds a query parameter to a <see cref="HttpRequest"/>.
@@ -162,7 +188,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="value">The query parameter's value.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithQueryParameter(this HttpRequest request, string parameterName, Guid value)
-            => request.WithQueryParameter(parameterName, value.ToString());
+        {
+            return request.WithQueryParameter(parameterName, value.ToString());
+        }
 
         /// <summary>
         /// Adds a query parameter to a <see cref="HttpRequest"/>.

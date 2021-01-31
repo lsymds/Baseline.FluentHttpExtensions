@@ -18,8 +18,10 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         /// <param name="token">The optional cancellation token</param>
         /// <returns>The response returned from the actioned request.</returns>
-        public static async Task<HttpResponseMessage> MakeRequest(this HttpRequest request,
-            CancellationToken token = default)
+        public static async Task<HttpResponseMessage> MakeRequest(
+            this HttpRequest request,
+            CancellationToken token = default
+        )
         {
             // Build Uri from Uri and query string parameters.
             var uri = new UriBuilder(request.Uri);

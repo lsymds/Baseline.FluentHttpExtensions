@@ -41,7 +41,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="token">The bearer token.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithBearerTokenAuth(this HttpRequest request, string token)
-            => request.WithRequestHeader("Authorization", $"Bearer {token.Replace("Bearer ", "")}");
+        {
+            return request.WithRequestHeader("Authorization", $"Bearer {token.Replace("Bearer ", "")}");
+        }
 
         /// <summary>
         /// Sets the Authorization header to contain basic authentication.
@@ -63,7 +65,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="userAgent">The user agent to set.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest WithUserAgent(this HttpRequest request, string userAgent)
-            => request.WithRequestHeader("User-Agent", userAgent);
+        {
+            return request.WithRequestHeader("User-Agent", userAgent);
+        }
 
         /// <summary>
         /// Sets the content type that the requester can interpret. By default, this method appends multiple calls of
@@ -95,8 +99,10 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="request">The http request to set the Accept header against.</param>
         /// <param name="replace">Whether to replace the header instead of adding to it.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
-        public static HttpRequest AcceptingJsonResponseContentType(this HttpRequest request, bool replace = false) =>
-            request.AcceptingResponseContentType("application/json", replace);
+        public static HttpRequest AcceptingJsonResponseContentType(this HttpRequest request, bool replace = false)
+        {
+            return request.AcceptingResponseContentType("application/json", replace);
+        }
 
         /// <summary>
         /// Sets the content type that the requester can interpret to be application/xml. By default, this method
@@ -107,7 +113,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="replace">Whether to replace the header instead of adding to it.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest AcceptingXmlResponseContentType(this HttpRequest request, bool replace = false)
-            => request.AcceptingResponseContentType("application/xml", replace);
+        {
+            return request.AcceptingResponseContentType("application/xml", replace);
+        }
 
         /// <summary>
         /// Sets the content type that the requester can interpret to be text/plain. By default, this method
@@ -118,7 +126,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="replace">Whether to replace the header instead of adding to it.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest AcceptingPlainResponseContentType(this HttpRequest request, bool replace = false)
-            => request.AcceptingResponseContentType("text/plain", replace);
+        {
+            return request.AcceptingResponseContentType("text/plain", replace);
+        }
 
         /// <summary>
         /// Sets the content type that the requester can interpret to be text/html. By default, this method
@@ -129,6 +139,8 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="replace">Whether to replace the header instead of adding to it.</param>
         /// <returns>The current <see cref="HttpRequest"/>.</returns>
         public static HttpRequest AcceptingHtmlResponseContentType(this HttpRequest request, bool replace = false)
-            => request.AcceptingResponseContentType("text/html", replace);
+        {
+            return request.AcceptingResponseContentType("text/html", replace);
+        }
     }
 }
