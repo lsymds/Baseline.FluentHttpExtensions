@@ -2,7 +2,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FluentHttpExtensions.Tests.EndToEndTests
+namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
 {
     public class EchoTests
     {

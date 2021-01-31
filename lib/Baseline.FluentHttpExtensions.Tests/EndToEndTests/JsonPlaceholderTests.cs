@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FluentHttpExtensions.Tests.EndToEndTests
+namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
 {
     public class JsonPlaceholderTests
     {

@@ -5,7 +5,7 @@ using Moq;
 using Moq.Language.Flow;
 using Xunit;
 
-namespace FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
+namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
 {
     public class ResponseContentTypeTests : UnitTest
     {

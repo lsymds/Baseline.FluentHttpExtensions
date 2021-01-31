@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
+namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
 {
     public class WithHeaderTests : UnitTest
     {

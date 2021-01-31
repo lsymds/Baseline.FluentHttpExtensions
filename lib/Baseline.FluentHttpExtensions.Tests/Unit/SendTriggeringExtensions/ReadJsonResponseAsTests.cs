@@ -6,7 +6,7 @@ using Xunit;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 #pragma warning disable 8618
 
-namespace FluentHttpExtensions.Tests.Unit.SendTriggeringExtensions
+namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensions
 {
     public class ReadJsonResponseAsTests : UnitTest
     {

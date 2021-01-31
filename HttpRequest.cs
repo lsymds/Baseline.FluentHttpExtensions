@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Serialization;
 
-namespace FluentHttpExtensions
+namespace Baseline.FluentHttpExtensions
 {
     /// <summary>
     /// Request container that is eventually translated into a HttpWebRequest instance. All extension methods hang off
@@ -111,7 +111,7 @@ namespace FluentHttpExtensions
         /// <summary>
         /// Sets the content type that the requester can interpret. By default, this method appends multiple calls of
         /// <see cref="AcceptingResponseContentType"/> to one another. If you wish to change this behavior, set the
-        /// <see cref="replace"/> parameter to true.
+        /// replace parameter to true.
         /// </summary>
         /// <param name="request">The http request to set the Accept header against.</param>
         /// <param name="contentType">The content type that the requester can interpret.</param>
@@ -133,7 +133,7 @@ namespace FluentHttpExtensions
         /// <summary>
         /// Sets the content type that the requester can interpret to be application/json. By default, this method
         /// appends multiple AcceptingResponseContentType calls to one another. If you wish to change this behavior,
-        /// set the <see cref="replace"/> parameter to true.
+        /// set the replace parameter to true.
         /// </summary>
         /// <param name="request">The http request to set the Accept header against.</param>
         /// <param name="replace">Whether to replace the header instead of adding to it.</param>
@@ -144,7 +144,7 @@ namespace FluentHttpExtensions
         /// <summary>
         /// Sets the content type that the requester can interpret to be application/xml. By default, this method
         /// appends multiple AcceptingResponseContentType calls to one another. If you wish to change this behavior,
-        /// set the <see cref="replace"/> parameter to true.
+        /// set the replace parameter to true.
         /// </summary>
         /// <param name="request">The http request to set the Accept header against.</param>
         /// <param name="replace">Whether to replace the header instead of adding to it.</param>
@@ -155,7 +155,7 @@ namespace FluentHttpExtensions
         /// <summary>
         /// Sets the content type that the requester can interpret to be text/plain. By default, this method
         /// appends multiple AcceptingResponseContentType calls to one another. If you wish to change this behavior,
-        /// set the <see cref="replace"/> parameter to true.
+        /// set the replace parameter to true.
         /// </summary>
         /// <param name="request">The http request to set the Accept header against.</param>
         /// <param name="replace">Whether to replace the header instead of adding to it.</param>
@@ -166,7 +166,7 @@ namespace FluentHttpExtensions
         /// <summary>
         /// Sets the content type that the requester can interpret to be text/html. By default, this method
         /// appends multiple AcceptingResponseContentType calls to one another. If you wish to change this behavior,
-        /// set the <see cref="replace"/> parameter to true.
+        /// set the replace parameter to true.
         /// </summary>
         /// <param name="request">The http request to set the Accept header against.</param>
         /// <param name="replace">Whether to replace the header instead of adding to it.</param>

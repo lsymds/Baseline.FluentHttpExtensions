@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FluentHttpExtensions.Tests.Unit.ActionExtensionsTests
+namespace Baseline.FluentHttpExtensions.Tests.Unit.ActionExtensionsTests
 {
     public class RequestMethodTests : UnitTest
     {
