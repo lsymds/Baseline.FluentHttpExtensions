@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentHttpExtensions", "FluentHttpExtensions.csproj", "{5F7E6B79-A564-42B2-9DAE-5759F653D199}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Baseline.FluentHttpExtensions", "Baseline.FluentHttpExtensions.csproj", "{5F7E6B79-A564-42B2-9DAE-5759F653D199}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentHttpExtensions.Tests", "FluentHttpExtensions.Tests\FluentHttpExtensions.Tests.csproj", "{6B277570-3D64-46DC-A633-78A785976040}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Baseline.FluentHttpExtensions.Tests", "Baseline.FluentHttpExtensions.Tests\Baseline.FluentHttpExtensions.Tests.csproj", "{6B277570-3D64-46DC-A633-78A785976040}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

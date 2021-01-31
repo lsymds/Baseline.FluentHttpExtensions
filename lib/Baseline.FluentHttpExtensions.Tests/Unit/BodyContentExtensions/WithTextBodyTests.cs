@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FluentHttpExtensions.Tests.Unit.BodyContentExtensions
+namespace Baseline.FluentHttpExtensions.Tests.Unit.BodyContentExtensions
 {
     public class WithTextBodyTests : UnitTest
     {

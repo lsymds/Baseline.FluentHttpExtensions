@@ -8,7 +8,7 @@ using Moq;
 using Moq.Language.Flow;
 using Moq.Protected;
 
-namespace FluentHttpExtensions.Tests.Unit
+namespace Baseline.FluentHttpExtensions.Tests.Unit
 {
     public abstract class UnitTest
     {

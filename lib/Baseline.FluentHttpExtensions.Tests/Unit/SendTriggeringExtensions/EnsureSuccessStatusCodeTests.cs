@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Moq;
 using Xunit;
 
-namespace FluentHttpExtensions.Tests.Unit.SendTriggeringExtensions
+namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensions
 {
     public class EnsureSuccessStatusCodeTests : UnitTest
     {

@@ -5,12 +5,12 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <PackageId>FluentHttpExtensions</PackageId>
-        <PackageTags>http client;system.net.httpclient;httpclient;http abstractions;easy;simple;moogie;FluentHttpExtensions</PackageTags>
+        <PackageId>Baseline.FluentHttpExtensions</PackageId>
+        <PackageTags>http client;system.net.httpclient;httpclient;http abstractions;easy;simple;baseline;Baseline.FluentHttpExtensions;flurl;FluentHttpExtensions</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <Authors>l_symonds</Authors>
-        <RepositoryUrl>https://github.com/lsymonds/FluentHttpExtensions</RepositoryUrl>
-        <PackageDescription>FluentHttpExtensions is a single file fluent interface for the System.Net.Http.HttpClient class, now available as a NuGet package!</PackageDescription>
+        <Authors>lsymonds</Authors>
+        <RepositoryUrl>https://github.com/lsymonds/Baseline.FluentHttpExtensions</RepositoryUrl>
+        <PackageDescription>Baseline.FluentHttpExtensions is a single file fluent interface for the System.Net.Http.HttpClient class, now available as a NuGet package!</PackageDescription>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
@@ -19,10 +19,12 @@
         <Compile Include="..\HttpRequest.cs">
             <Link>HttpRequest.cs</Link>
         </Compile>
+        <Compile Remove="Baseline.FluentHttpExtensions.Tests\**" />
     </ItemGroup>
 
     <ItemGroup>
         <EmbeddedResource Remove="FluentHttpExtensions.Tests\**" />
+        <EmbeddedResource Remove="Baseline.FluentHttpExtensions.Tests\**" />
     </ItemGroup>
 
     <ItemGroup>
@@ -31,6 +33,7 @@
         <None Remove=".gitignore" />
         <None Remove="LICENSE" />
         <None Remove="README.md" />
+        <None Remove="Baseline.FluentHttpExtensions.Tests\**" />
     </ItemGroup>
 
     <ItemGroup>

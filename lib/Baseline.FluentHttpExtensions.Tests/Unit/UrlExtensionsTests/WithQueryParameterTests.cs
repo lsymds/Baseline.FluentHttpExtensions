@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
+namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
 {
     public class WithQueryParameterTests : UnitTest
     {

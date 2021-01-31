@@ -1,27 +1,35 @@
-# FluentHttpExtensions
+# 👋 Baseline.FluentHttpExtensions
 
-> Syntactic sugar in a single file for the `System.Net.Http.HttpClient` class.
+Syntactic sugar in a single file (or a NuGet package) for the `System.Net.Http.HttpClient` class. Part of the Baseline
+collection of projects: a set of packages, projects and services to make building modern .NET applications easier.
 
-## Sponsor
+## 💵 Sponsor
 
-Proudly sponsored by BossLabs Ltd (https://bosslabs.co.uk) - they build scalable software
-solutions for businesses of all sizes.
+Proudly sponsored by BossLabs Ltd (https://bosslabs.co.uk) - they build scalable software solutions for businesses of
+all sizes.
 
-## Introduction
+## 🏗 Contributing
 
-FluentHttpExtensions is a single file fluent interface for the `System.Net.Http.HttpClient` class. This means that you can simply
-drop the `HttpRequest.cs` file into your project and begin making http requests easily and beautifully.
+Whilst you are free to contribute in the form of issues representing bugs, requests or improvements, I don't accept
+code contributions to any of my projects. For more information, click [here](https://github.com/lsymonds#-pull-requests-and-contributions).
+
+## 📖 Introduction
+
+Baseline.FluentHttpExtensions is a single file fluent interface for the `System.Net.Http.HttpClient` class. This means
+that you can simply drop the `HttpRequest.cs` file into your project (or install the NuGet package) and begin making
+http requests easily and beautifully.
 
 I built this for one reason: to stop repeating myself whenever I'm working on a library or project where one of the
 requirements is to keep external dependencies to a minimum, or where a fully featured request library such as
 `Flurl.Http` feels a little overkill.
 
-This library in its single file and packaged form requires your project to be using .NET Standard 2.0 or above. Where you are dropping the file into your project, you will also need to install the System.Text.Json package.
+This library in its single file and packaged form requires your project to be using .NET Standard 2.0 or above.
+Where you are dropping the file into your project, you will also need to install the System.Text.Json package.
 
 ### Getting Started
 
-The entry point to FluentHttpExtensions is the `HttpRequest` class. This class should be initialized and used for one request
-only. It has two constructors:
+The entry point to Baseline.FluentHttpExtensions is the `HttpRequest` class. This class should be initialized and used f
+or one request only. It has two constructors:
 
 ```
 public HttpRequest(string uri)
@@ -37,11 +45,14 @@ You can also construct a `HttpRequest` instance from a string representing a UI,
 "https://www.google.com".AsAGetRequest() // yields a HttpRequest
 ```
 
-To see more on the different methods available to modify the HTTP verb, read on.
+Each request (other than ones triggering a physical request to the configured resource) is fluent, meaning you can
+chain multiple method calls together to create code that is not only quick to write but also clean and easy to decipher.
 
-## Methods
+## 🛠 Documentation
 
 **Request Methods**
+
+Request methods modify the HTTP verb of the request.
 
 * `AsAGetRequest()` - Sets the verb of the request to GET.
 
@@ -61,6 +72,10 @@ To see more on the different methods available to modify the HTTP verb, read on.
 
 **String to Request Methods**
 
+Extension methods of the built in type `string`, these methods allow you to quickly generate a `HttpRequest` instance
+without calling the `HttpRequest` constructor. You can optionally pass in a `HttpClient` instance which will be used
+instead. If you don't, a static one handled inside of `Baseline.FluentHttpExtensions` will be used instead.
+
 * `"abc".AsAGetRequest(HttpClient? client = default)` - Creates a GET request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
 
 * `"abc".AsAPostRequest(HttpClient? client = default)`  - Creates a POST request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
@@ -79,8 +94,11 @@ To see more on the different methods available to modify the HTTP verb, read on.
 
 **URL Methods**
 
+URL methods allow you to modify the URL that is sent to
+
 * `WithPathSegment([short, ushort, int, uint, long, ulong, Guid, string?] pathSegment)` - Adds a path segment of the
-specified type to the URL. They are added in the order that `WithPathSegment` is called.
+specified type to the URL. They are added in the order that `WithPathSegment` is called. Most built in types can
+be passed in without having to directly convert it to a string.
 
 * `WithQueryParameter(string parameterName, [short, ushort, int, uint, long, ulong, Guid, string?] value)` - Adds a
 query string parameter with the specified name and value. This method can be called with the same `parameterName`
@@ -153,7 +171,7 @@ without having to make the request again.
 
 * `Task<T> ReadXmlResponseAs<T>()` - Deserializes the XML content of the response into an object of type T.
 
-## Examples
+## ❔ Examples
 
 **Daily cat facts**
 
