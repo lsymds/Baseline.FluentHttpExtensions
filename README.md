@@ -16,8 +16,8 @@ code contributions to any of my projects. For more information, click [here](htt
 ## 📖 Introduction
 
 Baseline.FluentHttpExtensions is a single file fluent interface for the `System.Net.Http.HttpClient` class. This means
-that you can simply drop the `HttpRequest.cs` file into your project (or install the NuGet package) and begin making
-http requests easily and beautifully.
+that you can simply drop the `BaselineFluentHttpExtensions.cs` file into your project (or install the NuGet package) and
+begin making http requests easily and beautifully.
 
 I built this for one reason: to stop repeating myself whenever I'm working on a library or project where one of the
 requirements is to keep external dependencies to a minimum, or where a fully featured request library such as
