@@ -15,11 +15,11 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
                 var decodedString =
                     Encoding.UTF8.GetString(Convert.FromBase64String(r.Headers.Authorization.Parameter));
 
-                Assert.Equal("moogie:http", decodedString);
+                Assert.Equal("baseline:http", decodedString);
             });
 
             await HttpRequest
-                .WithBasicAuth("moogie", "http")
+                .WithBasicAuth("baseline", "http")
                 .EnsureSuccessStatusCode();
         }
     }
