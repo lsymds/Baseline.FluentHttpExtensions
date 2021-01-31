@@ -3,7 +3,7 @@
 set -e;
 
 echo "Running pre-commit hook: Generated combined BaselineFluentHttpExtensions.cs file."
-cd Baseline.FluentHttpExtensions.FileCombiner/ && \
+cd src/Baseline.FluentHttpExtensions.FileCombiner/ && \
     dotnet run && \
     cd ../../ && \
     git add BaselineFluentHttpExtensions.cs;
