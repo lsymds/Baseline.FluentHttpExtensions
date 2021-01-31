@@ -1,3 +1,4 @@
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -9,7 +10,7 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
         public async Task It_Can_Retrieve_A_User()
         {
             var user = await "https://jsonplaceholder.typicode.com/users/1"
-                .AsAGetRequest()
+                .AsAGetRequest(new HttpClient())
                 .ReadJsonResponseAs<User>();
 
             Assert.Equal(1, user.Id);

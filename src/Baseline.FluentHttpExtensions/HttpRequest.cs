@@ -32,12 +32,18 @@ namespace Baseline.FluentHttpExtensions
         {
             Uri = uri;
 
-            if (httpClient == null && _newClientInstance == null)
+            if (
+                httpClient == null &&
+                BaselineFluentHttpExtensionsHttpClientManager.GetGlobalHttpClient() == null &&
+                _newClientInstance == null
+            )
             {
                 _newClientInstance = new HttpClient();
             }
 
-            HttpClient = httpClient ?? _newClientInstance;
+            HttpClient = httpClient ??
+                         BaselineFluentHttpExtensionsHttpClientManager.GetGlobalHttpClient() ??
+                         _newClientInstance;
         }
     }
 }
