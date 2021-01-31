@@ -50,6 +50,8 @@ chain multiple method calls together to create code that is not only quick to wr
 
 ## 🛠 Documentation
 
+### Library methods
+
 **Request Methods**
 
 Request methods modify the HTTP verb of the request.
@@ -170,6 +172,47 @@ without having to make the request again.
 * `Task<T> ReadJsonResponseAs<T>()` - Deserializes the JSON content of the response into an object of type T.
 
 * `Task<T> ReadXmlResponseAs<T>()` - Deserializes the XML content of the response into an object of type T.
+
+### Controlling the HttpClient instance that is used
+
+Baseline.FluentHttpExtensions allows a pre-defined `HttpClient` instance to be optionally provided in two ways before
+defaulting back to its own static, internally managed instance.
+
+You can provide one on each instantiation of a `HttpRequest` class (or via a fluent method that instantiates it for you):
+
+```csharp
+var myHttpClient = new HttpClient();
+
+// Via constructor injection.
+await ("https://www.google.com", new HttpRequest(myHttpClient))
+    .AsAGetRequest()
+    .EnsureSuccessStatusCode();
+
+// Via a fluent method that does the instantiation for you.
+await "https://www.google.com"
+    .AsAGetRequest(myHttpClient)
+    .EnsureSuccessStatusCode();
+```
+
+OR, you can configure one globally via the `BaselineFluentHttpExtensionsHttpClientManager` static class:
+
+```csharp
+var myHttpClient = new HttpClient();
+
+BaselineFluentHttpExtensionsHttpClientManager.SetGlobalHttpClient(myHttpClient);
+
+// All future requests where an instance is not specified uses the above defined client.
+await "https://www.google.com"
+    .AsAGetRequest()
+    .EnsureSuccessStatusCode();
+
+// However, should you want to, you can still override it by providing an instance directly.
+var mySecondClient = new HttpClient();
+
+await "https://www.google.com"
+    .AsAGetRequest(mySecondClient)
+    .EnsureSuccessStatusCode();
+```
 
 ## ❔ Examples
 
