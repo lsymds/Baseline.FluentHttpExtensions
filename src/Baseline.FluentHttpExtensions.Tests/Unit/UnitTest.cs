@@ -12,16 +12,16 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit
 {
     public abstract class UnitTest
     {
-        private Mock<HttpMessageHandler> _messageHandler = new Mock<HttpMessageHandler>();
         protected const string RequestUrl = "https://www.google.com";
+        protected Mock<HttpMessageHandler> MessageHandler = new Mock<HttpMessageHandler>();
         protected HttpClient HttpClient;
         protected HttpRequest HttpRequest { get; }
         protected IReturnsResult<HttpMessageHandler> MessageHandlerResult { get; private set; }
 
         protected UnitTest()
         {
-            HttpClient = new HttpClient(_messageHandler.Object);
-            MessageHandlerResult = ConfigureMessageHandlerResultSuccess(_messageHandler);
+            HttpClient = new HttpClient(MessageHandler.Object);
+            MessageHandlerResult = ConfigureMessageHandlerResultSuccess(MessageHandler);
             HttpRequest = new HttpRequest(RequestUrl, HttpClient);
         }
 

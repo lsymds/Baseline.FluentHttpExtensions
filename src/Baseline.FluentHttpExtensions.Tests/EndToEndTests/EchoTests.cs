@@ -10,7 +10,7 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
         public async Task Can_Make_Request_With_Auth_And_Content_Type_Headers()
         {
             var response = await "https://postman-echo.com/put"
-                .AsAPutRequest()
+                .AsAPutRequest(new HttpClient())
                 .WithTextBody("This is a test")
                 .ReadResponseAsString();
 
@@ -21,12 +21,12 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
         public async Task Can_Make_A_Request_With_Basic_Auth()
         {
             await "https://postman-echo.com/basic-auth"
-                .AsAGetRequest()
+                .AsAGetRequest(new HttpClient())
                 .WithBasicAuth("postman", "password")
                 .EnsureSuccessStatusCode();
 
             var failedResponse = await "https://postman-echo.com/basic-auth"
-                .AsAGetRequest()
+                .AsAGetRequest(new HttpClient())
                 .WithBasicAuth("postman", "wrong-password")
                 .MakeRequest();
             Assert.Throws<HttpRequestException>(() => failedResponse.EnsureSuccessStatusCode());
@@ -36,7 +36,7 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
         public async Task Custom_Headers_Are_Added_Correctly()
         {
             var response = await "https://postman-echo.com/headers"
-                .AsAGetRequest()
+                .AsAGetRequest(new HttpClient())
                 .WithRequestHeader("X-Custom-Header", "my-custom-header")
                 .WithUserAgent("my-compoota")
                 .WithRequestHeader("X-Help-Me", "the-robots-have-taken-over")
@@ -51,7 +51,7 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
         public async Task Can_Post_Json()
         {
             var response = await "https://postman-echo.com/post"
-                .AsAPostRequest()
+                .AsAPostRequest(new HttpClient())
                 .WithJsonBody(new {Id = "1", Name = "foo"})
                 .ReadResponseAsString();
 
