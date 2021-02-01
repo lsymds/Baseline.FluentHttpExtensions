@@ -29,7 +29,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.ActionExtensionsTests
 
             // Arrange & Act.
             await handler(HttpRequest)
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
     }
 }

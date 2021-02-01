@@ -12,7 +12,7 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
             var response = await "https://postman-echo.com/put"
                 .AsAPutRequest(new HttpClient())
                 .WithTextBody("This is a test")
-                .ReadResponseAsString();
+                .ReadResponseAsStringAsync();
 
             Assert.Contains("This is a test", response);
         }
@@ -23,12 +23,12 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
             await "https://postman-echo.com/basic-auth"
                 .AsAGetRequest(new HttpClient())
                 .WithBasicAuth("postman", "password")
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
 
             var failedResponse = await "https://postman-echo.com/basic-auth"
                 .AsAGetRequest(new HttpClient())
                 .WithBasicAuth("postman", "wrong-password")
-                .MakeRequest();
+                .MakeRequestAsync();
             Assert.Throws<HttpRequestException>(() => failedResponse.EnsureSuccessStatusCode());
         }
 
@@ -40,7 +40,7 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
                 .WithRequestHeader("X-Custom-Header", "my-custom-header")
                 .WithUserAgent("my-compoota")
                 .WithRequestHeader("X-Help-Me", "the-robots-have-taken-over")
-                .ReadResponseAsString();
+                .ReadResponseAsStringAsync();
 
             Assert.Contains(@"""x-custom-header"":""my-custom-header""", response);
             Assert.Contains(@"""user-agent"":""my-compoota""", response);
@@ -53,7 +53,7 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
             var response = await "https://postman-echo.com/post"
                 .AsAPostRequest(new HttpClient())
                 .WithJsonBody(new {Id = "1", Name = "foo"})
-                .ReadResponseAsString();
+                .ReadResponseAsStringAsync();
 
             Assert.Contains(@"""Id"":""1""", response);
             Assert.Contains(@"""Name"":""foo""", response);

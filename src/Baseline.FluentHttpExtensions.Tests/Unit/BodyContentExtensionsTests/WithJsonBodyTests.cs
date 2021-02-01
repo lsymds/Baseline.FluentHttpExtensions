@@ -43,7 +43,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.BodyContentExtensionsTests
             await HttpRequest
                 .AsAGetRequest()
                 .WithJsonBody(new TestBody {Name = "Bob Smith", Age = 47})
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
     }
 }

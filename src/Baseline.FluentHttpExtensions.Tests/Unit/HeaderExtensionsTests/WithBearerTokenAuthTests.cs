@@ -14,7 +14,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
 
             await HttpRequest
                 .WithBearerTokenAuth(token)
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
 
             await HttpRequest
                 .WithBasicAuth("baseline", "http")
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
     }
 }

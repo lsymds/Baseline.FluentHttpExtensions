@@ -13,7 +13,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
             await HttpRequest
                 .WithUserAgent("baseline")
                 .AsAGetRequest()
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
         {
             var user = await "https://jsonplaceholder.typicode.com/users/1"
                 .AsAGetRequest(new HttpClient())
-                .ReadJsonResponseAs<User>();
+                .ReadJsonResponseAsAsync<User>();
 
             Assert.Equal(1, user.Id);
             Assert.Equal("Leanne Graham", user.Name);

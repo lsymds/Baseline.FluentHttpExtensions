@@ -32,7 +32,7 @@ namespace Baseline.FluentHttpExtensions
         internal Dictionary<string, string> Headers { get; set; }
         internal List<string> PathSegments { get; set; }
         internal List<(string Name, string Value)> QueryParameters { get; set; }
-        internal Func<CancellationToken, Task<HttpContent>> GetBodyContent { get; set; }
+        internal Func<CancellationToken, Task<HttpContent>> GetBodyContentAsync { get; set; }
         /// <summary>
         /// Initialises a new instance of the <see cref="HttpRequest"/> struct with a base URI and an optional,
         /// underlying <see cref="HttpClient"/> instance to use.
@@ -42,11 +42,45 @@ namespace Baseline.FluentHttpExtensions
         public HttpRequest(string uri, HttpClient httpClient = default)
         {
             Uri = uri;
-            if (httpClient == null && _newClientInstance == null)
+            if (
+                httpClient == null &&
+                BaselineFluentHttpExtensionsHttpClientManager.GetGlobalHttpClient() == null &&
+                _newClientInstance == null
+            )
             {
                 _newClientInstance = new HttpClient();
             }
-            HttpClient = httpClient ?? _newClientInstance;
+            HttpClient = httpClient ??
+                         BaselineFluentHttpExtensionsHttpClientManager.GetGlobalHttpClient() ??
+                         _newClientInstance;
+        }
+    }
+}
+
+namespace Baseline.FluentHttpExtensions
+{
+    /// <summary>
+    /// Provides the ability for a consuming application to globally set the HttpClient that will be used for all
+    /// subsequent Baseline.FluentHttpExtensions.HttpRequest requests (unless an overriding HttpClient is explicitly
+    /// specified to the initiating methods/constructor).
+    /// </summary>
+    public static class BaselineFluentHttpExtensionsHttpClientManager
+    {
+        private static HttpClient _client;
+        /// <summary>
+        /// Sets the global HttpClient to use for any subsequent requests.
+        /// </summary>
+        /// <param name="client">The HttpClient instance to use.</param>
+        public static void SetGlobalHttpClient(HttpClient client)
+        {
+            _client = client;
+        }
+        /// <summary>
+        /// Gets the global HttpClient to use. If one has not been specified, this method returns null.
+        /// </summary>
+        internal static HttpClient GetGlobalHttpClient()
+        {
+            return _client;
         }
     }
 }
@@ -71,7 +105,7 @@ namespace Baseline.FluentHttpExtensions
             {
                 throw new ArgumentNullException(nameof(body));
             }
-            request.GetBodyContent = async token =>
+            request.GetBodyContentAsync = async token =>
             {
                 // No, I don't need to have a using statement. StreamContent will automatically dispose of it when
                 // .Dispose() is called on it.
@@ -102,9 +136,54 @@ namespace Baseline.FluentHttpExtensions
             {
                 throw new ArgumentNullException(nameof(contentType));
             }
-            request.GetBodyContent = _ =>
+            request.GetBodyContentAsync = _ =>
                 Task.FromResult((HttpContent) new StringContent(body, Encoding.UTF8, contentType));
             return request;
+        }
+    }
+}
+
+namespace Baseline.FluentHttpExtensions
+{
+    /// <summary>
+    /// Extension methods related to the building of things, such as URIs. Allows consumers to make business logic
+    /// decisions without having to physically submit a request.
+    /// </summary>
+    public static class BuilderExtensions
+    {
+        /// <summary>
+        /// Builds the URI from parameters defined in the request such as the base URI, path segments, query string
+        /// parameters etc without submitting the request.
+        /// </summary>
+        /// <param name="request">The configured request to build the URI from.</param>
+        /// <returns>A built URI, equivalent to what will be sent via the HttpClient.</returns>
+        public static Uri BuildUri(this HttpRequest request)
+        {
+            var uri = new UriBuilder(request.Uri);
+            if (request.QueryParameters != null)
+            {
+                var queryStringParameters = HttpUtility.ParseQueryString(uri.Query);
+                foreach (var (name, value) in request.QueryParameters)
+                {
+                    queryStringParameters.Add(name, value);
+                }
+                uri.Query = queryStringParameters.ToString();
+            }
+            if (request.PathSegments != null)
+            {
+                uri.Path += string.Join("/", request.PathSegments);
+            }
+            return uri.Uri;
+        }
+        /// <summary>
+        /// Builds a URI from the parameters defined in the request such as the base URI, path segments, query string
+        /// parameters etc without submitting the request.
+        /// </summary>
+        /// <param name="request">The configured request to build the URI from.</param>
+        /// <returns>A built URI, equivalent to what will be sent via the HttpClient, in a string format.</returns>
+        public static string BuildUriAsString(this HttpRequest request)
+        {
+            return request.BuildUri().ToString();
         }
     }
 }
@@ -253,7 +332,7 @@ namespace Baseline.FluentHttpExtensions
         /// </summary>
         /// <param name="response">The response message.</param>
         /// <returns>An awaitable task yielding the response as a string.</returns>
-        public static async Task<string> ReadResponseAsString(
+        public static async Task<string> ReadResponseAsStringAsync(
             this HttpResponseMessage response
         )
         {
@@ -267,7 +346,7 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="token">The optional cancellation token</param>
         /// <typeparam name="T">The type to deserialize the JSON into.</typeparam>
         /// <returns>An awaitable task yielding the deserialized object.</returns>
-        public static async Task<T> ReadJsonResponseAs<T>(
+        public static async Task<T> ReadJsonResponseAsAsync<T>(
             this HttpResponseMessage response,
             JsonSerializerOptions jsonSerializerOptions = null,
             CancellationToken token = default
@@ -286,7 +365,7 @@ namespace Baseline.FluentHttpExtensions
         /// </summary>
         /// <param name="response">The response to retrieve the content from and deserialize.</param>
         /// <returns>The deserialized representation of the XML, or null if it could not be casted.</returns>
-        public static async Task<T> ReadXmlResponseAs<T>(
+        public static async Task<T> ReadXmlResponseAsAsync<T>(
             this HttpResponseMessage response
         ) where T : class
         {
@@ -398,27 +477,12 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         /// <param name="token">The optional cancellation token</param>
         /// <returns>The response returned from the actioned request.</returns>
-        public static async Task<HttpResponseMessage> MakeRequest(
+        public static async Task<HttpResponseMessage> MakeRequestAsync(
             this HttpRequest request,
             CancellationToken token = default
         )
         {
-            // Build Uri from Uri and query string parameters.
-            var uri = new UriBuilder(request.Uri);
-            if (request.QueryParameters != null)
-            {
-                var queryStringParameters = HttpUtility.ParseQueryString(uri.Query);
-                foreach (var (name, value) in request.QueryParameters)
-                {
-                    queryStringParameters.Add(name, value);
-                }
-                uri.Query = queryStringParameters.ToString();
-            }
-            if (request.PathSegments != null)
-            {
-                uri.Path += string.Join("/", request.PathSegments);
-            }
-            var actualRequest = new HttpRequestMessage(request.HttpMethod, uri.Uri);
+            var actualRequest = new HttpRequestMessage(request.HttpMethod, request.BuildUri());
             // Build headers.
             if (request.Headers != null)
             {
@@ -428,9 +492,9 @@ namespace Baseline.FluentHttpExtensions
                 }
             }
             // Set body.
-            if (request.GetBodyContent != null)
+            if (request.GetBodyContentAsync != null)
             {
-                actualRequest.Content = await request.GetBodyContent(token);
+                actualRequest.Content = await request.GetBodyContentAsync(token);
             }
             return await request.HttpClient.SendAsync(actualRequest, token).ConfigureAwait(false);
         }
@@ -441,9 +505,9 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="request">The configured request to make.</param>
         /// <param name="token">The optional cancellation token</param>
         /// <returns>An awaitable task.</returns>
-        public static async Task EnsureSuccessStatusCode(this HttpRequest request, CancellationToken token = default)
+        public static async Task EnsureSuccessStatusCodeAsync(this HttpRequest request, CancellationToken token = default)
         {
-            using (var response = await request.MakeRequest(token).ConfigureAwait(false))
+            using (var response = await request.MakeRequestAsync(token).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
             }
@@ -455,13 +519,13 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="request">The configured request to make.</param>
         /// <param name="token">The optional cancellation token</param>
         /// <returns>An awaitable task yielding the response as a string.</returns>
-        public static async Task<string> ReadResponseAsString(this HttpRequest request,
+        public static async Task<string> ReadResponseAsStringAsync(this HttpRequest request,
             CancellationToken token = default)
         {
-            using (var response = await request.MakeRequest(token).ConfigureAwait(false))
+            using (var response = await request.MakeRequestAsync(token).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
-                return await response.ReadResponseAsString().ConfigureAwait(false);
+                return await response.ReadResponseAsStringAsync().ConfigureAwait(false);
             }
         }
         /// <summary>
@@ -473,16 +537,16 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="token">The optional cancellation token</param>
         /// <typeparam name="T">The type to deserialize the JSON into.</typeparam>
         /// <returns>An awaitable task yielding the deserialized object.</returns>
-        public static async Task<T> ReadJsonResponseAs<T>(
+        public static async Task<T> ReadJsonResponseAsAsync<T>(
             this HttpRequest request,
             JsonSerializerOptions jsonSerializerOptions = null,
             CancellationToken token = default
         )
         {
-            using (var response = await request.MakeRequest(token).ConfigureAwait(false))
+            using (var response = await request.MakeRequestAsync(token).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
-                return await response.ReadJsonResponseAs<T>(jsonSerializerOptions, token).ConfigureAwait(false);
+                return await response.ReadJsonResponseAsAsync<T>(jsonSerializerOptions, token).ConfigureAwait(false);
             }
         }
         /// <summary>
@@ -492,15 +556,15 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="request">The configured request to make.</param>
         /// <param name="token">The optional cancellation token.</param>
         /// <returns>The deserialized representation of the XML, or null if it could not be casted.</returns>
-        public static async Task<T> ReadXmlResponseAs<T>(
+        public static async Task<T> ReadXmlResponseAsAsync<T>(
             this HttpRequest request,
             CancellationToken token = default
         ) where T : class
         {
-            using (var response = await request.MakeRequest(token).ConfigureAwait(false))
+            using (var response = await request.MakeRequestAsync(token).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
-                return await response.ReadXmlResponseAs<T>().ConfigureAwait(false);
+                return await response.ReadXmlResponseAsAsync<T>().ConfigureAwait(false);
             }
         }
     }

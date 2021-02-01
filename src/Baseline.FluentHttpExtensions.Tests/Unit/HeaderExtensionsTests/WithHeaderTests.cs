@@ -13,7 +13,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
             await HttpRequest
                 .WithRequestHeader("Authorization", "Bearer foo-bar")
                 .AsAGetRequest()
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
 
         [Fact]
@@ -25,7 +25,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
                 .WithRequestHeader("Authorization", "Bearer foo")
                 .WithRequestHeader("Authorization", "Bearer bar")
                 .AsAGetRequest()
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
     }
 }

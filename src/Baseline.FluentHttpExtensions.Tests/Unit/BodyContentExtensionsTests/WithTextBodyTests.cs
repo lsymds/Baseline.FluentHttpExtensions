@@ -36,7 +36,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.BodyContentExtensionsTests
 
             await HttpRequest
                 .WithTextBody("abc")
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
     }
 }
