@@ -13,7 +13,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
 
             await HttpRequest
                 .WithQueryParameter("a", "b")
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
                 .WithQueryParameter("bingo", guid)
                 .WithQueryParameter("bar", (short)3)
                 .WithQueryParameter("bus", ulong.MaxValue)
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
                 .WithQueryParameter("a", "c")
                 .WithQueryParameter("c", 5)
                 .WithQueryParameter("c", (ushort)55)
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
                 .WithQueryParameter("c", " ")
                 .WithQueryParameter("d", "3")
                 .WithQueryParameter("e", string.Empty)
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
     }
 }

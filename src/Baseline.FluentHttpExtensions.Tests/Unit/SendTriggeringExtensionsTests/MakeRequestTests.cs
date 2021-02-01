@@ -11,7 +11,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
         {
             var response = await HttpRequest
                 .AsAGetRequest()
-                .MakeRequest();
+                .MakeRequestAsync();
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }

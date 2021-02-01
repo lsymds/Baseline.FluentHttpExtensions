@@ -16,7 +16,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
             var request = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
 
             // Act.
-            async Task Act() => await request.EnsureSuccessStatusCode();
+            async Task Act() => await request.EnsureSuccessStatusCodeAsync();
 
             // Assert.
             await Assert.ThrowsAsync<HttpRequestException>(Act);
@@ -26,7 +26,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
         public async Task Good_Status_Code_Doesnt_Return_An_Error()
         {
             // Arrange, Act & Assert.
-            await HttpRequest.EnsureSuccessStatusCode();
+            await HttpRequest.EnsureSuccessStatusCodeAsync();
         }
     }
 }

@@ -6,5 +6,6 @@ echo "Running pre-commit hook: Generating combined BaselineFluentHttpExtensions.
 cd src/Baseline.FluentHttpExtensions.FileCombiner/ && \
     dotnet run && \
     cd ../../ && \
-    git add BaselineFluentHttpExtensions.cs;
+    git add BaselineFluentHttpExtensions.cs && \
+    cp BaselineFluentHttpExtensions.cs src/Baseline.FluentHttpExtensions.CombinedFileTests/;
 echo "Running pre-commit hook: Finished combining BaselineFluentHttpExtensions.cs file."

@@ -20,7 +20,7 @@ namespace Baseline.FluentHttpExtensions
         internal Dictionary<string, string> Headers { get; set; }
         internal List<string> PathSegments { get; set; }
         internal List<(string Name, string Value)> QueryParameters { get; set; }
-        internal Func<CancellationToken, Task<HttpContent>> GetBodyContent { get; set; }
+        internal Func<CancellationToken, Task<HttpContent>> GetBodyContentAsync { get; set; }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="HttpRequest"/> struct with a base URI and an optional,

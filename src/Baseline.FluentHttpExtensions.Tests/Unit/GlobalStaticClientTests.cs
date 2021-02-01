@@ -22,7 +22,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit
                 .WithPathSegment("global")
                 .WithPathSegment("http")
                 .WithPathSegment("test")
-                .ReadResponseAsString();
+                .ReadResponseAsStringAsync();
             Assert.Equal("response from a global client", response);
         }
     }

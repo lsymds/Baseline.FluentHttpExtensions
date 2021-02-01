@@ -28,7 +28,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.StringToHttpRequestExtensions
         {
             OnRequestMade(r => Assert.Equal(expected, r.Method));
 
-            await func(Url, HttpClient).EnsureSuccessStatusCode();
+            await func(Url, HttpClient).EnsureSuccessStatusCodeAsync();
         }
     }
 }

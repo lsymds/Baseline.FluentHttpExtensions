@@ -18,7 +18,7 @@ namespace Baseline.FluentHttpExtensions
         /// </summary>
         /// <param name="response">The response message.</param>
         /// <returns>An awaitable task yielding the response as a string.</returns>
-        public static async Task<string> ReadResponseAsString(
+        public static async Task<string> ReadResponseAsStringAsync(
             this HttpResponseMessage response
         )
         {
@@ -33,7 +33,7 @@ namespace Baseline.FluentHttpExtensions
         /// <param name="token">The optional cancellation token</param>
         /// <typeparam name="T">The type to deserialize the JSON into.</typeparam>
         /// <returns>An awaitable task yielding the deserialized object.</returns>
-        public static async Task<T> ReadJsonResponseAs<T>(
+        public static async Task<T> ReadJsonResponseAsAsync<T>(
             this HttpResponseMessage response,
             JsonSerializerOptions jsonSerializerOptions = null,
             CancellationToken token = default
@@ -54,7 +54,7 @@ namespace Baseline.FluentHttpExtensions
         /// </summary>
         /// <param name="response">The response to retrieve the content from and deserialize.</param>
         /// <returns>The deserialized representation of the XML, or null if it could not be casted.</returns>
-        public static async Task<T> ReadXmlResponseAs<T>(
+        public static async Task<T> ReadXmlResponseAsAsync<T>(
             this HttpResponseMessage response
         ) where T : class
         {

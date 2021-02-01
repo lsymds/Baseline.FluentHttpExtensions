@@ -27,7 +27,7 @@ namespace Baseline.FluentHttpExtensions
                 throw new ArgumentNullException(nameof(body));
             }
 
-            request.GetBodyContent = async token =>
+            request.GetBodyContentAsync = async token =>
             {
                 // No, I don't need to have a using statement. StreamContent will automatically dispose of it when
                 // .Dispose() is called on it.
@@ -65,7 +65,7 @@ namespace Baseline.FluentHttpExtensions
                 throw new ArgumentNullException(nameof(contentType));
             }
 
-            request.GetBodyContent = _ =>
+            request.GetBodyContentAsync = _ =>
                 Task.FromResult((HttpContent) new StringContent(body, Encoding.UTF8, contentType));
 
             return request;

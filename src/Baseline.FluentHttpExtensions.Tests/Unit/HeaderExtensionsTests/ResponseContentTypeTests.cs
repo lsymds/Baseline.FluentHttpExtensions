@@ -28,7 +28,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
                 OnRequestMade(r => Assert.Equal(methodAndExpected.expected, r.Headers.Accept.ToString()), handlerResult);
 
                 await methodAndExpected.Item1(request)
-                    .EnsureSuccessStatusCode();
+                    .EnsureSuccessStatusCodeAsync();
             }
         }
 
@@ -55,7 +55,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
                 OnRequestMade(r => Assert.Equal(methodAndExpected.expected, r.Headers.Accept.ToString()), handlerResult);
 
                 await methodAndExpected.Item1(request)
-                    .EnsureSuccessStatusCode();
+                    .EnsureSuccessStatusCodeAsync();
             }
         }
 
@@ -78,7 +78,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
                 OnRequestMade(r => Assert.Equal(methodAndExpected.expected, r.Headers.Accept.ToString()), handlerResult);
 
                 await methodAndExpected.Item1(request)
-                    .EnsureSuccessStatusCode();
+                    .EnsureSuccessStatusCodeAsync();
             }
         }
 

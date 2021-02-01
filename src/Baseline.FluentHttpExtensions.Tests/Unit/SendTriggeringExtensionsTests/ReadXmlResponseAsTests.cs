@@ -17,7 +17,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
             var request = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
 
             // Act.
-            async Task Act() => await request.ReadXmlResponseAs<object>();
+            async Task Act() => await request.ReadXmlResponseAsAsync<object>();
 
             // Assert.
             await Assert.ThrowsAsync<HttpRequestException>(Act);
@@ -32,7 +32,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
             var request = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
 
             // Act.
-            var response = await request.ReadXmlResponseAs<TestXmlObject>();
+            var response = await request.ReadXmlResponseAsAsync<TestXmlObject>();
 
             // Assert.
             Assert.NotNull(response);

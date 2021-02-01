@@ -22,7 +22,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
                 .WithPathSegment((long)25)
                 .WithPathSegment(ulong.MaxValue)
                 .WithPathSegment("fivebillion")
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
                 .WithPathSegment("three")
                 .WithPathSegment("two")
                 .WithQueryParameter("b", "2")
-                .EnsureSuccessStatusCode();
+                .EnsureSuccessStatusCodeAsync();
         }
     }
 }

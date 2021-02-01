@@ -158,19 +158,19 @@ format. Under the hood, this method utilises the `BuildUri` extension method.
 The send triggering methods perform the actual request to the configured endpoint. For that reason, they do not
 continue the fluent interface and return response types relevant to their methods.
 
-* `Task<HttpResponseMessage> MakeRequest()` - Performs the request using the configured parameters and returns the
+* `Task<HttpResponseMessage> MakeRequestAsync()` - Performs the request using the configured parameters and returns the
 response.
 
-* `Task EnsureSuccessStatusCode()` - Performs the request and calls `.EnsureSuccessStatusCode()` on the returned
+* `Task EnsureSuccessStatusCodeAsync()` - Performs the request and calls `.EnsureSuccessStatusCode()` on the returned
 response.
 
-* `Task<string> ReadResponseAsString()` - Performs the request and reads the request as a string. This method first
+* `Task<string> ReadResponseAsStringAsync()` - Performs the request and reads the request as a string. This method first
 ensures that the status code returned is a successful one.
 
-* `Task<T> ReadJsonResponseAs<T>()` - Performs the request and deserializes the JSON response into an object of type T.
+* `Task<T> ReadJsonResponseAsAsync<T>()` - Performs the request and deserializes the JSON response into an object of type T.
 This method first ensures that the status code returned is a successful one.
 
-* `Task<T> ReadXmlResponseAs<T>()` - Performs the request and Deserializes the XML content of the response into an
+* `Task<T> ReadXmlResponseAsAsync<T>()` - Performs the request and Deserializes the XML content of the response into an
 object of type T. This method first ensures that the status code returned is a successful one.
 
 **HttpResponseMessage Methods**
@@ -179,11 +179,11 @@ Occasionally, you may want to perform more than one action on a `HttpResponseMes
 method. The following methods allow you to do that against a `HttpResponseMessage` saved in a variable multiple times,
 without having to make the request again.
 
-* `Task<string> ReadResponseAsString()` - Reads the content of the response as a string.
+* `Task<string> ReadResponseAsStringAsync()` - Reads the content of the response as a string.
 
-* `Task<T> ReadJsonResponseAs<T>()` - Deserializes the JSON content of the response into an object of type T.
+* `Task<T> ReadJsonResponseAsAsync<T>()` - Deserializes the JSON content of the response into an object of type T.
 
-* `Task<T> ReadXmlResponseAs<T>()` - Deserializes the XML content of the response into an object of type T.
+* `Task<T> ReadXmlResponseAsAsync<T>()` - Deserializes the XML content of the response into an object of type T.
 
 ### Controlling the HttpClient instance that is used
 
@@ -198,12 +198,12 @@ var myHttpClient = new HttpClient();
 // Via constructor injection.
 await ("https://www.google.com", new HttpRequest(myHttpClient))
     .AsAGetRequest()
-    .EnsureSuccessStatusCode();
+    .EnsureSuccessStatusCodeAsync();
 
 // Via a fluent method that does the instantiation for you.
 await "https://www.google.com"
     .AsAGetRequest(myHttpClient)
-    .EnsureSuccessStatusCode();
+    .EnsureSuccessStatusCodeAsync();
 ```
 
 OR, you can configure one globally via the `BaselineFluentHttpExtensionsHttpClientManager` static class:
@@ -216,28 +216,23 @@ BaselineFluentHttpExtensionsHttpClientManager.SetGlobalHttpClient(myHttpClient);
 // All future requests where an instance is not specified uses the above defined client.
 await "https://www.google.com"
     .AsAGetRequest()
-    .EnsureSuccessStatusCode();
+    .EnsureSuccessStatusCodeAsync();
 
 // However, should you want to, you can still override it by providing an instance directly.
 var mySecondClient = new HttpClient();
 
 await "https://www.google.com"
     .AsAGetRequest(mySecondClient)
-    .EnsureSuccessStatusCode();
+    .EnsureSuccessStatusCodeAsync();
 ```
 
 ## ❔ Examples
 
-**Daily cat facts**
-
 ```csharp
-var catFacts = await "https://cat-fact.herokuapp.com"
+var user = await "https://jsonplaceholder.typicode.com/users/1"
     .AsAGetRequest()
-    .WithPathSegment("facts")
-    .ReadResponseAsString();
+    .ReadJsonResponseAsAsync<User>();
 
-Console.WriteLine(catFacts);
-
-> {"all":[{"_id":"58e008ad0aac31001185ed0c","text":"The frequency of a domestic cat's purr is the same at which ..........
-
+Console.WriteLine(user.Id);
+Console.WriteLine(user.Name);
 ```
