@@ -78,21 +78,21 @@ Extension methods of the built in type `string`, these methods allow you to quic
 without calling the `HttpRequest` constructor. You can optionally pass in a `HttpClient` instance which will be used
 instead. If you don't, a static one handled inside of `Baseline.FluentHttpExtensions` will be used instead.
 
-* `"abc".AsAGetRequest(HttpClient? client = default)` - Creates a GET request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
+* `"https://www.google.com".AsAGetRequest(HttpClient? client = default)` - Creates a GET request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
 
-* `"abc".AsAPostRequest(HttpClient? client = default)`  - Creates a POST request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
+* `"https://www.google.com".AsAPostRequest(HttpClient? client = default)`  - Creates a POST request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
 
-* `"abc".AsAPutRequest(HttpClient? client = default)` - Creates a PUT request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
+* `"https://www.google.com".AsAPutRequest(HttpClient? client = default)` - Creates a PUT request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
 
-* `"abc".AsAPatchRequest(HttpClient? client = default)` - Creates a PATCH request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
+* `"https://www.google.com".AsAPatchRequest(HttpClient? client = default)` - Creates a PATCH request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
 
-* `"abc".AsADeleteRequest(HttpClient? client = default)` - Creates a DELETE request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
+* `"https://www.google.com".AsADeleteRequest(HttpClient? client = default)` - Creates a DELETE request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
 
-* `"abc".AsATraceRequest(HttpClient? client = default)` - Creates a TRACE request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
+* `"https://www.google.com".AsATraceRequest(HttpClient? client = default)` - Creates a TRACE request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
 
-* `"abc".AsAHeadRequest(HttpClient? client = default)` - Creates a HEAD request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
+* `"https://www.google.com".AsAHeadRequest(HttpClient? client = default)` - Creates a HEAD request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
 
-* `"abc".AsAnOptionsRequest(HttpClient? client = default)` - Creates an OPTIONS request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
+* `"https://www.google.com".AsAnOptionsRequest(HttpClient? client = default)` - Creates an OPTIONS request with an optional `HttpClient` and returns a configured `HttpRequest` instance.
 
 **URL Methods**
 
@@ -140,6 +140,18 @@ to `application/json`. If replace is specified, the `Content-Type` response head
 
 * `WithTextBody(string body, string contentType = "text/plain")` - Sets the request's body to `body` and sets the
 `Content-Type` header to `contentType`.
+
+**Builder Methods**
+
+Builder methods allow you to build components such as the finalised URI this library generates without having to physically
+submit the request first. These extension methods are used internally by other extension methods such as `MakeRequest`,
+so all responses returned from builder methods are exactly what will be used elsewhere and can be depended on.
+
+* `Uri BuildUri()` - Generates and returns the URI that will be used when the request is sent. Using this method does
+not stop you from adding more parameters to the `HttpRequest`, but it will not be updated automatically.
+
+* `string BuildUriAsString()` - Generates and returns the URI that will be used when the request is sent in a string
+format. Under the hood, this method utilises the `BuildUri` extension method.
 
 **Send Triggering Methods**
 

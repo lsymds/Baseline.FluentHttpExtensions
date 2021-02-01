@@ -2,7 +2,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensions
+namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
 {
     public class MakeRequestTests : UnitTest
     {

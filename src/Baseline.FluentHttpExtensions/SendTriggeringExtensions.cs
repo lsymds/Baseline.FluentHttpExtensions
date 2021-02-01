@@ -23,26 +23,7 @@ namespace Baseline.FluentHttpExtensions
             CancellationToken token = default
         )
         {
-            // Build Uri from Uri and query string parameters.
-            var uri = new UriBuilder(request.Uri);
-            if (request.QueryParameters != null)
-            {
-                var queryStringParameters = HttpUtility.ParseQueryString(uri.Query);
-
-                foreach (var (name, value) in request.QueryParameters)
-                {
-                    queryStringParameters.Add(name, value);
-                }
-
-                uri.Query = queryStringParameters.ToString();
-            }
-
-            if (request.PathSegments != null)
-            {
-                uri.Path += string.Join("/", request.PathSegments);
-            }
-
-            var actualRequest = new HttpRequestMessage(request.HttpMethod, uri.Uri);
+            var actualRequest = new HttpRequestMessage(request.HttpMethod, request.BuildUri());
 
             // Build headers.
             if (request.Headers != null)
