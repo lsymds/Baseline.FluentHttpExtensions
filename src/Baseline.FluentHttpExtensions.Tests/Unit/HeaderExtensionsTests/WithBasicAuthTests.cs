@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
@@ -15,7 +16,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
                 var decodedString =
                     Encoding.UTF8.GetString(Convert.FromBase64String(r.Headers.Authorization.Parameter));
 
-                Assert.Equal("baseline:http", decodedString);
+                decodedString.Should().Be("baseline:http");
             });
 
             await HttpRequest

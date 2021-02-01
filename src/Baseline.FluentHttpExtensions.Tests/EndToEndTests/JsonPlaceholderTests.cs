@@ -1,5 +1,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
@@ -13,8 +14,8 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
                 .AsAGetRequest(new HttpClient())
                 .ReadJsonResponseAsAsync<User>();
 
-            Assert.Equal(1, user.Id);
-            Assert.Equal("Leanne Graham", user.Name);
+            user.Id.Should().Be(1);
+            user.Name.Should().Be("Leanne Graham");
         }
     }
 

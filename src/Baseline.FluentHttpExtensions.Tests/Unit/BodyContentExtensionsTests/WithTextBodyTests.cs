@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace Baseline.FluentHttpExtensions.Tests.Unit.BodyContentExtensionsTests
@@ -9,17 +10,17 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.BodyContentExtensionsTests
         [Fact]
         public void Null_Body_Results_In_An_Exception_Being_Thrown()
         {
-            void Act() => HttpRequest.WithTextBody(null);
+            Action func = () => HttpRequest.WithTextBody(null);
 
-            Assert.Throws<ArgumentNullException>(Act);
+            func.Should().ThrowExactly<ArgumentNullException>();
         }
 
         [Fact]
         public void Null_Content_Type_Results_In_An_Exception_Being_Thrown()
         {
-            void Act() => HttpRequest.WithTextBody("abc", "  ");
+            Action func = () => HttpRequest.WithTextBody("abc", "  ");
 
-            Assert.Throws<ArgumentNullException>(Act);
+            func.Should().ThrowExactly<ArgumentNullException>();
         }
 
         [Fact]
@@ -30,8 +31,8 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.BodyContentExtensionsTests
                 var content = r.Content.ReadAsStringAsync();
                 content.Wait();
 
-                Assert.Equal("text/plain; charset=utf-8", r.Content.Headers.ContentType.ToString());
-                Assert.Equal("abc", content.Result);
+                r.Content.Headers.ContentType.ToString().Should().Be("text/plain; charset=utf-8");
+                content.Result.Should().Be("abc");
             });
 
             await HttpRequest

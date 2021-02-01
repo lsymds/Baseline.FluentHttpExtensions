@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace Baseline.FluentHttpExtensions.Tests.Unit.StringToHttpRequestExtensionsTests
@@ -26,7 +27,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.StringToHttpRequestExtensions
         [MemberData(nameof(StringIntoRequestParams))]
         public async Task Can_Convert_A_String_Into_A_Request(Func<string, HttpClient, HttpRequest> func, HttpMethod expected)
         {
-            OnRequestMade(r => Assert.Equal(expected, r.Method));
+            OnRequestMade(r => r.Method.Should().Be(expected));
 
             await func(Url, HttpClient).EnsureSuccessStatusCodeAsync();
         }

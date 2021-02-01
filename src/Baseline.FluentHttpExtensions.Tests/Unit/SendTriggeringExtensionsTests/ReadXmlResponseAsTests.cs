@@ -1,6 +1,8 @@
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using FluentAssertions;
 using Moq;
 using Xunit;
 
@@ -11,32 +13,26 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
         [Fact]
         public async Task Checks_Success_Status_First()
         {
-            // Arrange.
             var mockMessageHandler = new Mock<HttpMessageHandler>();
             ConfigureMessageHandlerResultFailure(mockMessageHandler);
             var request = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
 
-            // Act.
-            async Task Act() => await request.ReadXmlResponseAsAsync<object>();
+            Func<Task> func = async () => await request.ReadXmlResponseAsAsync<object>();
 
-            // Assert.
-            await Assert.ThrowsAsync<HttpRequestException>(Act);
+            await func.Should().ThrowExactlyAsync<HttpRequestException>();
         }
 
         [Fact]
         public async Task Returns_Xml_Successfully()
         {
-            // Arrange.
             var mockMessageHandler = new Mock<HttpMessageHandler>();
             ConfigureMessageHandlerResultSuccess(mockMessageHandler, "<foo><bar>abc</bar></foo>", "application/xml");
             var request = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
 
-            // Act.
             var response = await request.ReadXmlResponseAsAsync<TestXmlObject>();
 
-            // Assert.
-            Assert.NotNull(response);
-            Assert.Equal("abc", response.Bar);
+            response.Should().NotBeNull();
+            response.Bar.Should().Be("abc");
         }
     }
 

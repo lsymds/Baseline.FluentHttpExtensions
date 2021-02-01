@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Xunit;
 
 namespace Baseline.FluentHttpExtensions.Tests.Unit.BuilderExtensionsTests
@@ -13,7 +14,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.BuilderExtensionsTests
                 .WithQueryParameter("q", "how much does a pug snore")
                 .BuildUri();
 
-            Assert.Equal("https://www.google.com/search?q=how+much+does+a+pug+snore", response.ToString());
+            response.ToString().Should().Be("https://www.google.com/search?q=how+much+does+a+pug+snore");
         }
     }
 }

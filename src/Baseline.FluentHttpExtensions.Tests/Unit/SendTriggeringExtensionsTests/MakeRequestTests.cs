@@ -1,5 +1,6 @@
 using System.Net;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
@@ -13,7 +14,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
                 .AsAGetRequest()
                 .MakeRequestAsync();
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
     }
 }

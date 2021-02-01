@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Moq.Language.Flow;
 using Xunit;
@@ -25,7 +26,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
             {
                 var (handlerResult, request) = CreateBaseRequest();
 
-                OnRequestMade(r => Assert.Equal(methodAndExpected.expected, r.Headers.Accept.ToString()), handlerResult);
+                OnRequestMade(r => r.Headers.Accept.ToString().Should().Be(methodAndExpected.expected), handlerResult);
 
                 await methodAndExpected.Item1(request)
                     .EnsureSuccessStatusCodeAsync();
@@ -52,7 +53,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
             {
                 var (handlerResult, request) = CreateBaseRequest();
 
-                OnRequestMade(r => Assert.Equal(methodAndExpected.expected, r.Headers.Accept.ToString()), handlerResult);
+                OnRequestMade(r => r.Headers.Accept.ToString().Should().Be(methodAndExpected.expected), handlerResult);
 
                 await methodAndExpected.Item1(request)
                     .EnsureSuccessStatusCodeAsync();
@@ -75,7 +76,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
             {
                 var (handlerResult, request) = CreateBaseRequest();
 
-                OnRequestMade(r => Assert.Equal(methodAndExpected.expected, r.Headers.Accept.ToString()), handlerResult);
+                OnRequestMade(r => r.Headers.Accept.ToString().Should().Be(methodAndExpected.expected), handlerResult);
 
                 await methodAndExpected.Item1(request)
                     .EnsureSuccessStatusCodeAsync();

@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
@@ -8,7 +9,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
         [Fact]
         public async Task With_Header_Successfully_Adds_A_New_Header()
         {
-            OnRequestMade(r => Assert.Equal("foo-bar", r.Headers.Authorization.Parameter));
+            OnRequestMade(r => r.Headers.Authorization.Parameter.Should().Be("foo-bar"));
 
             await HttpRequest
                 .WithRequestHeader("Authorization", "Bearer foo-bar")
@@ -19,7 +20,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.HeaderExtensionsTests
         [Fact]
         public async Task With_Header_Overwrites_An_Existing_Header()
         {
-            OnRequestMade(r => Assert.Equal("bar", r.Headers.Authorization.Parameter));
+            OnRequestMade(r => r.Headers.Authorization.Parameter.Should().Be("bar"));
 
             await HttpRequest
                 .WithRequestHeader("Authorization", "Bearer foo")

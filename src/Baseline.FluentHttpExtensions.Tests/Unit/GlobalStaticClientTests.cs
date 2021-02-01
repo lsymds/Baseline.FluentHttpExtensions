@@ -1,5 +1,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace Baseline.FluentHttpExtensions.Tests.Unit
@@ -16,14 +17,14 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit
                 "response from a global client",
                 "text/plain"
             );
-            OnRequestMade(r => Assert.Contains("/global/http/test", r.RequestUri.OriginalString), messageHandlerResult);
+            OnRequestMade(r => r.RequestUri.OriginalString.Should().Contain("/global/http/test"), messageHandlerResult);
 
             var response = await "http://www.google.com".AsAGetRequest()
                 .WithPathSegment("global")
                 .WithPathSegment("http")
                 .WithPathSegment("test")
                 .ReadResponseAsStringAsync();
-            Assert.Equal("response from a global client", response);
+            response.Should().Be("response from a global client");
         }
     }
 }
