@@ -1,5 +1,7 @@
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Xunit;
 
@@ -10,31 +12,25 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
         [Fact]
         public async Task Checks_Success_Response_First()
         {
-            // Arrange.
             var mockMessageHandler = new Mock<HttpMessageHandler>();
             ConfigureMessageHandlerResultFailure(mockMessageHandler);
             var request = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
 
-            // Act.
-            async Task Act() => await request.ReadResponseAsStringAsync();
+            Func<Task> func = async () => await request.ReadResponseAsStringAsync();
 
-            // Assert.
-            await Assert.ThrowsAsync<HttpRequestException>(Act);
+            await func.Should().ThrowExactlyAsync<HttpRequestException>();
         }
 
         [Fact]
         public async Task Returns_String_Content_Successfully()
         {
-            // Arrange.
             var mockMessageHandler = new Mock<HttpMessageHandler>();
             ConfigureMessageHandlerResultSuccess(mockMessageHandler, "hello world", "text/plain");
             var request = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
 
-            // Act.
             var response = await request.ReadResponseAsStringAsync();
 
-            // Assert.
-            Assert.Equal("hello world", response);
+            response.Should().Be("hello world");
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace Baseline.FluentHttpExtensions.Tests.Unit.ActionExtensionsTests
@@ -25,11 +26,10 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.ActionExtensionsTests
         public async Task Can_Set_Request_Methods_Correctly(Func<HttpRequest, HttpRequest> handler, HttpMethod expected)
         {
             // Assert.
-            OnRequestMade(r => Assert.Equal(expected.Method, r.Method.Method));
+            OnRequestMade(r => r.Method.Method.Should().Be(expected.Method));
 
             // Arrange & Act.
-            await handler(HttpRequest)
-                .EnsureSuccessStatusCodeAsync();
+            await handler(HttpRequest).EnsureSuccessStatusCodeAsync();
         }
     }
 }

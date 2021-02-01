@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
@@ -10,7 +11,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
         public async Task Can_Add_Multiple_Path_Segments()
         {
             var guid = Guid.NewGuid();
-            OnRequestMade(r => Assert.Contains($"/one/3/2/10/{guid}/18/25/{ulong.MaxValue}/fivebillion", r.RequestUri.ToString()));
+            OnRequestMade(r => r.RequestUri.ToString().Should().Contain($"/one/3/2/10/{guid}/18/25/{ulong.MaxValue}/fivebillion"));
 
             await HttpRequest
                 .WithPathSegment("one")
@@ -28,7 +29,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
         [Fact]
         public async Task Can_Add_Path_Segments_And_Query_String_Parameters()
         {
-            OnRequestMade(r => Assert.Contains("/one/three/two?a=1&b=2", r.RequestUri.ToString()));
+            OnRequestMade(r => r.RequestUri.ToString().Should().Contain("/one/three/two?a=1&b=2"));
 
             await HttpRequest
                 .WithPathSegment("one")

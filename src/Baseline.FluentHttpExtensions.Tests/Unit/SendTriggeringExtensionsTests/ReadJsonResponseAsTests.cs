@@ -1,5 +1,7 @@
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Xunit;
 
@@ -14,16 +16,13 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
         [Fact]
         public async Task Checks_Success_Status_First()
         {
-            // Arrange.
             var mockMessageHandler = new Mock<HttpMessageHandler>();
             ConfigureMessageHandlerResultFailure(mockMessageHandler);
             var request = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
 
-            // Act.
-            async Task Act() => await request.ReadJsonResponseAsAsync<object>();
+            Func<Task> func = async () => await request.ReadJsonResponseAsAsync<object>();
 
-            // Assert.
-            await Assert.ThrowsAsync<HttpRequestException>(Act);
+            await func.Should().ThrowExactlyAsync<HttpRequestException>();
         }
 
         // ReSharper disable once ClassNeverInstantiated.Local
@@ -37,18 +36,14 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
         [InlineData(@"{ ""name"": ""bob smith"" }")]
         public async Task Successfully_Resolves_Into_An_Object(string json)
         {
-            // Arrange.
             var mockMessageHandler = new Mock<HttpMessageHandler>();
             ConfigureMessageHandlerResultSuccess(mockMessageHandler, json);
             var request = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
 
-            // Act.
-            var response = await request
-                .ReadJsonResponseAsAsync<ResolvedObject>();
+            var response = await request.ReadJsonResponseAsAsync<ResolvedObject>();
 
-            // Assert.
-            Assert.NotNull(response);
-            Assert.Equal("bob smith", response.Name);
+            response.Should().NotBeNull();
+            response.Name.Should().Be("bob smith");
         }
     }
 }

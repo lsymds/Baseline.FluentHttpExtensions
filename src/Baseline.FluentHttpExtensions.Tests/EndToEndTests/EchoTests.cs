@@ -1,5 +1,7 @@
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
@@ -14,7 +16,7 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
                 .WithTextBody("This is a test")
                 .ReadResponseAsStringAsync();
 
-            Assert.Contains("This is a test", response);
+            response.Should().Contain("This is a test");
         }
 
         [Fact]
@@ -25,11 +27,12 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
                 .WithBasicAuth("postman", "password")
                 .EnsureSuccessStatusCodeAsync();
 
-            var failedResponse = await "https://postman-echo.com/basic-auth"
+            Func<Task> func = async () => await "https://postman-echo.com/basic-auth"
                 .AsAGetRequest(new HttpClient())
-                .WithBasicAuth("postman", "wrong-password")
-                .MakeRequestAsync();
-            Assert.Throws<HttpRequestException>(() => failedResponse.EnsureSuccessStatusCode());
+                .WithBasicAuth("postman", "wrong-pwd")
+                .EnsureSuccessStatusCodeAsync();
+
+            await func.Should().ThrowExactlyAsync<HttpRequestException>();
         }
 
         [Fact]
@@ -42,9 +45,9 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
                 .WithRequestHeader("X-Help-Me", "the-robots-have-taken-over")
                 .ReadResponseAsStringAsync();
 
-            Assert.Contains(@"""x-custom-header"":""my-custom-header""", response);
-            Assert.Contains(@"""user-agent"":""my-compoota""", response);
-            Assert.Contains(@"""x-help-me"":""the-robots-have-taken-over""", response);
+            response.Should().Contain(@"""x-custom-header"":""my-custom-header""");
+            response.Should().Contain(@"""user-agent"":""my-compoota""");
+            response.Should().Contain(@"""x-help-me"":""the-robots-have-taken-over""");
         }
 
         [Fact]
@@ -55,8 +58,8 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
                 .WithJsonBody(new {Id = "1", Name = "foo"})
                 .ReadResponseAsStringAsync();
 
-            Assert.Contains(@"""Id"":""1""", response);
-            Assert.Contains(@"""Name"":""foo""", response);
+            response.Should().Contain(@"""Id"":""1""");
+            response.Should().Contain(@"""Name"":""foo""");
         }
     }
 }

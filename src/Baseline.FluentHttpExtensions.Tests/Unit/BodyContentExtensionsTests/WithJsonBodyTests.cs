@@ -1,6 +1,7 @@
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 // ReSharper disable NotNullMemberIsNotInitialized
@@ -20,10 +21,10 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.BodyContentExtensionsTests
         public void Null_Argument_Results_In_An_Exception_Being_Thrown()
         {
             // Arrange.
-            void Act() => HttpRequest.WithJsonBody((object)null!);
+            Action func = () => HttpRequest.WithJsonBody((object)null!);
 
             // Act & Assert.
-            Assert.Throws<ArgumentNullException>(Act);
+            func.Should().ThrowExactly<ArgumentNullException>();
         }
 
         [Fact]
@@ -36,8 +37,8 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.BodyContentExtensionsTests
 
                 var convertedResponse = JsonSerializer.Deserialize<TestBody>(streamResponse.Result);
 
-                Assert.Equal("Bob Smith", convertedResponse.Name);
-                Assert.Equal(47, convertedResponse.Age);
+                convertedResponse.Name.Should().Be("Bob Smith");
+                convertedResponse.Age.Should().Be(47);
             });
 
             await HttpRequest

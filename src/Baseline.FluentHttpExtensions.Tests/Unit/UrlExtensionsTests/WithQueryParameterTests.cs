@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
@@ -9,7 +10,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
         [Fact]
         public async Task Single_Query_Parameter_Can_Be_Added()
         {
-            OnRequestMade(r => Assert.Contains("?a=b", r.RequestUri.ToString()));
+            OnRequestMade(r => r.RequestUri.ToString().Should().Contain("?a=b"));
 
             await HttpRequest
                 .WithQueryParameter("a", "b")
@@ -21,9 +22,11 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
         {
             var guid = Guid.NewGuid();
 
-            OnRequestMade(r => Assert.Contains(
-                $"?a=b&foo=bar&name=bill&fin=0&fon=1&far=10&fun=32&bingo={guid}&bar=3&bus={ulong.MaxValue}",
-                r.RequestUri.ToString()));
+            OnRequestMade(r => r.RequestUri
+                .ToString()
+                .Should()
+                .Contain($"?a=b&foo=bar&name=bill&fin=0&fon=1&far=10&fun=32&bingo={guid}&bar=3&bus={ulong.MaxValue}")
+            );
 
             await HttpRequest
                 .WithQueryParameter("a", "b")
@@ -42,7 +45,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
         [Fact]
         public async Task Can_Add_Same_Parameter_More_Than_Once()
         {
-            OnRequestMade(r => Assert.Contains("?a=b&a=c&c=5&c=55", r.RequestUri.ToString()));
+            OnRequestMade(r => r.RequestUri.ToString().Should().Contain("?a=b&a=c&c=5&c=55"));
 
             await HttpRequest
                 .WithQueryParameter("a", "b")
@@ -55,7 +58,7 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.UrlExtensionsTests
         [Fact]
         public async Task Invalid_Or_Empty_Query_String_Value_Is_Not_Added()
         {
-            OnRequestMade(r => Assert.Contains("?b=1&d=3", r.RequestUri.ToString()));
+            OnRequestMade(r => r.RequestUri.ToString().Should().Contain("?b=1&d=3"));
 
             await HttpRequest
                 .WithQueryParameter("a", null)
