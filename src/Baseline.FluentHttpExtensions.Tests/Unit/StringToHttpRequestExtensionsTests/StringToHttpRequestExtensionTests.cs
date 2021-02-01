@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Baseline.FluentHttpExtensions.Tests.Unit.StringToHttpRequestExtensions
+namespace Baseline.FluentHttpExtensions.Tests.Unit.StringToHttpRequestExtensionsTests
 {
     public class StringToHttpRequestExtensionTests : UnitTest
     {

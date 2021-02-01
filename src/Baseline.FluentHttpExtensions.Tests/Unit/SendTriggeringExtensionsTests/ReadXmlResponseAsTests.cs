@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 using Moq;
 using Xunit;
 
-namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensions
+namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
 {
     public class ReadXmlResponseAsTests : UnitTest
     {

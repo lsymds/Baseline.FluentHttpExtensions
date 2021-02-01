@@ -2,11 +2,12 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Moq;
 using Xunit;
+
 // ReSharper disable NotNullMemberIsNotInitialized
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 #pragma warning disable 8618
 
-namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensions
+namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
 {
     public class ReadJsonResponseAsTests : UnitTest
     {

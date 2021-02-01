@@ -2,10 +2,11 @@ using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
+
 // ReSharper disable NotNullMemberIsNotInitialized
 #pragma warning disable 8618
 
-namespace Baseline.FluentHttpExtensions.Tests.Unit.BodyContentExtensions
+namespace Baseline.FluentHttpExtensions.Tests.Unit.BodyContentExtensionsTests
 {
     public class TestBody
     {
