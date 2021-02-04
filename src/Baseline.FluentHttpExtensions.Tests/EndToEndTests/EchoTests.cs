@@ -19,20 +19,24 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
             response.Should().Contain("This is a test");
         }
 
-        [Fact]
-        public async Task Can_Make_A_Request_With_Basic_Auth()
+        [Theory]
+        [InlineData("postman", "password", false)]
+        [InlineData("postman", "wrong", true)]
+        public async Task Can_Make_A_Request_With_Basic_Auth(string username, string password, bool shouldThrow)
         {
-            await "https://postman-echo.com/basic-auth"
-                .AsAGetRequest(new HttpClient())
-                .WithBasicAuth("postman", "password")
-                .EnsureSuccessStatusCodeAsync();
-
             Func<Task> func = async () => await "https://postman-echo.com/basic-auth"
                 .AsAGetRequest(new HttpClient())
-                .WithBasicAuth("postman", "wrong-pwd")
+                .WithBasicAuth(username, password)
                 .EnsureSuccessStatusCodeAsync();
 
-            await func.Should().ThrowExactlyAsync<HttpRequestException>();
+            if (shouldThrow)
+            {
+                await func.Should().ThrowExactlyAsync<HttpRequestException>();
+            }
+            else
+            {
+                await func.Should().NotThrowAsync();
+            }
         }
 
         [Fact]

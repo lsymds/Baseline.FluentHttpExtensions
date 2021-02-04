@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
@@ -13,7 +14,8 @@ namespace Baseline.FluentHttpExtensions
     public static class SendTriggeringExtensions
     {
         /// <summary>
-        /// Makes and performs a request using the configured parameters.
+        /// Makes and performs a request using the configured parameters. You are responsible for managing the
+        /// disposal lifetimes of the response when using this method.
         /// </summary>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         /// <param name="token">The optional cancellation token</param>
@@ -59,13 +61,33 @@ namespace Baseline.FluentHttpExtensions
         }
 
         /// <summary>
+        /// Makes a request and reads the response as a stream. This method first ensures that the status code returned
+        /// is a successful one.
+        /// </summary>
+        /// <param name="request">The configured request to make.</param>
+        /// <param name="token">The optional cancellation token.</param>
+        /// <returns>The response as a stream.</returns>
+        public static async Task<Stream> ReadResponseAsStreamAsync(
+            this HttpRequest request,
+            CancellationToken token = default
+        )
+        {
+            using (var response = await request.MakeRequestAsync(token).ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+                return await response.ReadResponseAsStreamAsync();
+            }
+        }
+
+        /// <summary>
         /// Makes the request and reads the response as a string. This method first ensures that the status code
         /// returned is a successful one.
         /// </summary>
         /// <param name="request">The configured request to make.</param>
         /// <param name="token">The optional cancellation token</param>
         /// <returns>An awaitable task yielding the response as a string.</returns>
-        public static async Task<string> ReadResponseAsStringAsync(this HttpRequest request,
+        public static async Task<string> ReadResponseAsStringAsync(
+            this HttpRequest request,
             CancellationToken token = default)
         {
             using (var response = await request.MakeRequestAsync(token).ConfigureAwait(false))

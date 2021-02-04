@@ -328,13 +328,27 @@ namespace Baseline.FluentHttpExtensions
     public static class HttpResponseMessageExtensions
     {
         /// <summary>
+        /// Reads the response's content as a stream.
+        /// </summary>
+        /// <param name="response">The response message.</param>
+        /// <returns>The response as a stream.</returns>
+        public static async Task<Stream> ReadResponseAsStreamAsync(this HttpResponseMessage response)
+        {
+            var stream = new MemoryStream();
+            using (var contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+            {
+                contentStream.Seek(0, SeekOrigin.Begin);
+                await contentStream.CopyToAsync(stream).ConfigureAwait(false);
+            }
+            stream.Seek(0, SeekOrigin.Begin);
+            return stream;
+        }
+        /// <summary>
         /// Reads the response's content as a string.
         /// </summary>
         /// <param name="response">The response message.</param>
         /// <returns>An awaitable task yielding the response as a string.</returns>
-        public static async Task<string> ReadResponseAsStringAsync(
-            this HttpResponseMessage response
-        )
+        public static async Task<string> ReadResponseAsStringAsync(this HttpResponseMessage response)
         {
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
@@ -352,27 +366,29 @@ namespace Baseline.FluentHttpExtensions
             CancellationToken token = default
         )
         {
-            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            stream.Seek(0, SeekOrigin.Begin);
-            return await JsonSerializer.DeserializeAsync<T>(
-                stream,
-                jsonSerializerOptions ?? new JsonSerializerOptions { PropertyNameCaseInsensitive = true },
-                token
-            ).ConfigureAwait(false);
+            using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+                return await JsonSerializer.DeserializeAsync<T>(
+                    stream,
+                    jsonSerializerOptions ?? new JsonSerializerOptions {PropertyNameCaseInsensitive = true},
+                    token
+                ).ConfigureAwait(false);
+            }
         }
         /// <summary>
         /// Deserializes the XML response into an object.
         /// </summary>
         /// <param name="response">The response to retrieve the content from and deserialize.</param>
         /// <returns>The deserialized representation of the XML, or null if it could not be casted.</returns>
-        public static async Task<T> ReadXmlResponseAsAsync<T>(
-            this HttpResponseMessage response
-        ) where T : class
+        public static async Task<T> ReadXmlResponseAsAsync<T>(this HttpResponseMessage response)
         {
-            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            stream.Seek(0, SeekOrigin.Begin);
-            var xmlSerializer = new XmlSerializer(typeof(T));
-            return xmlSerializer.Deserialize(stream) as T;
+            using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+                var xmlSerializer = new XmlSerializer(typeof(T));
+                return (T) xmlSerializer.Deserialize(stream);
+            }
         }
     }
 }
@@ -472,7 +488,8 @@ namespace Baseline.FluentHttpExtensions
     public static class SendTriggeringExtensions
     {
         /// <summary>
-        /// Makes and performs a request using the configured parameters.
+        /// Makes and performs a request using the configured parameters. You are responsible for managing the
+        /// disposal lifetimes of the response when using this method.
         /// </summary>
         /// <param name="request">The current <see cref="HttpRequest"/>.</param>
         /// <param name="token">The optional cancellation token</param>
@@ -513,13 +530,32 @@ namespace Baseline.FluentHttpExtensions
             }
         }
         /// <summary>
+        /// Makes a request and reads the response as a stream. This method first ensures that the status code returned
+        /// is a successful one.
+        /// </summary>
+        /// <param name="request">The configured request to make.</param>
+        /// <param name="token">The optional cancellation token.</param>
+        /// <returns>The response as a stream.</returns>
+        public static async Task<Stream> ReadResponseAsStreamAsync(
+            this HttpRequest request,
+            CancellationToken token = default
+        )
+        {
+            using (var response = await request.MakeRequestAsync(token).ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+                return await response.ReadResponseAsStreamAsync();
+            }
+        }
+        /// <summary>
         /// Makes the request and reads the response as a string. This method first ensures that the status code
         /// returned is a successful one.
         /// </summary>
         /// <param name="request">The configured request to make.</param>
         /// <param name="token">The optional cancellation token</param>
         /// <returns>An awaitable task yielding the response as a string.</returns>
-        public static async Task<string> ReadResponseAsStringAsync(this HttpRequest request,
+        public static async Task<string> ReadResponseAsStringAsync(
+            this HttpRequest request,
             CancellationToken token = default)
         {
             using (var response = await request.MakeRequestAsync(token).ConfigureAwait(false))
