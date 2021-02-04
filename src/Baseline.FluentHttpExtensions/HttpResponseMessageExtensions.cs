@@ -14,7 +14,8 @@ namespace Baseline.FluentHttpExtensions
     public static class HttpResponseMessageExtensions
     {
         /// <summary>
-        /// Reads the response's content as a stream.
+        /// Reads the response's content as a stream. The new stream is entirely disconnected from the lifecycle of
+        /// <see cref="HttpContent"/>.
         /// </summary>
         /// <param name="response">The response message.</param>
         /// <returns>The response as a stream.</returns>
@@ -22,11 +23,9 @@ namespace Baseline.FluentHttpExtensions
         {
             var stream = new MemoryStream();
 
-            using (var contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-            {
-                contentStream.Seek(0, SeekOrigin.Begin);
-                await contentStream.CopyToAsync(stream).ConfigureAwait(false);
-            }
+            var contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            contentStream.Seek(0, SeekOrigin.Begin);
+            await contentStream.CopyToAsync(stream).ConfigureAwait(false);
 
             stream.Seek(0, SeekOrigin.Begin);
             return stream;
@@ -56,16 +55,14 @@ namespace Baseline.FluentHttpExtensions
             CancellationToken token = default
         )
         {
-            using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-            {
-                stream.Seek(0, SeekOrigin.Begin);
+            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            stream.Seek(0, SeekOrigin.Begin);
 
-                return await JsonSerializer.DeserializeAsync<T>(
-                    stream,
-                    jsonSerializerOptions ?? new JsonSerializerOptions {PropertyNameCaseInsensitive = true},
-                    token
-                ).ConfigureAwait(false);
-            }
+            return await JsonSerializer.DeserializeAsync<T>(
+                stream,
+                jsonSerializerOptions ?? new JsonSerializerOptions {PropertyNameCaseInsensitive = true},
+                token
+            ).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -75,13 +72,11 @@ namespace Baseline.FluentHttpExtensions
         /// <returns>The deserialized representation of the XML, or null if it could not be casted.</returns>
         public static async Task<T> ReadXmlResponseAsAsync<T>(this HttpResponseMessage response)
         {
-            using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-            {
-                stream.Seek(0, SeekOrigin.Begin);
+            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            stream.Seek(0, SeekOrigin.Begin);
 
-                var xmlSerializer = new XmlSerializer(typeof(T));
-                return (T) xmlSerializer.Deserialize(stream);
-            }
+            var xmlSerializer = new XmlSerializer(typeof(T));
+            return (T) xmlSerializer.Deserialize(stream);
         }
     }
 }

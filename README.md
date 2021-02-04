@@ -156,7 +156,11 @@ format. Under the hood, this method utilises the `BuildUri` extension method.
 **Send Triggering Methods**
 
 The send triggering methods perform the actual request to the configured endpoint. For that reason, they do not
-continue the fluent interface and return response types relevant to their methods.
+continue the fluent interface and return response types relevant to their methods. These methods dispose of the
+request automatically, and all methods except `MakeRequestAsync` will dispose of the response too. For most users, this
+will not cause any issues. However, if you are passing a stream around as a request body, for example, you may find
+it is disposed of by the below methods. To counter-act this, ensure you specify the `copyStream` parameter
+as true when using a stream as the request body.
 
 * `Task<HttpResponseMessage> MakeRequestAsync()` - Performs the request using the configured parameters and returns the
 response. Warning: when using this method, you are responsible for the lifetime of the returned response. Make sure you
@@ -182,7 +186,11 @@ Occasionally, you may want to perform more than one action on a `HttpResponseMes
 method. The following methods allow you to do that against a `HttpResponseMessage` saved in a variable multiple times,
 without having to make the request again.
 
-* `Task<Stream> ReadResponseAsStreamAsync()` - Reads the content of the response as a stream.
+These methods do not dispose of the response, and returns that responsibility to you, the consumer of the library.
+
+* `Task<Stream> ReadResponseAsStreamAsync()` - Reads the content of the response as a stream. The stream is copied into
+a memory stream, and as such can be read multiple times and passed outside of a using scope without causing
+any issues as a result of the original stream being disposed.
 
 * `Task<string> ReadResponseAsStringAsync()` - Reads the content of the response as a string.
 

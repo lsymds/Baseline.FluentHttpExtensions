@@ -2,7 +2,6 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Moq;
 using Xunit;
 
 namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
@@ -12,12 +11,9 @@ namespace Baseline.FluentHttpExtensions.Tests.Unit.SendTriggeringExtensionsTests
         [Fact]
         public async Task Failed_Status_Code_Returns_An_Error()
         {
-            var mockMessageHandler = new Mock<HttpMessageHandler>();
-            ConfigureMessageHandlerResultFailure(mockMessageHandler);
-            var request = new HttpRequest(RequestUrl, new HttpClient(mockMessageHandler.Object));
+            ConfigureMessageHandlerResultFailure(MessageHandler);
 
-            Func<Task> func = async () => await request.EnsureSuccessStatusCodeAsync();
-
+            Func<Task> func = async () => await HttpRequest.EnsureSuccessStatusCodeAsync();
             await func.Should().ThrowExactlyAsync<HttpRequestException>();
         }
 

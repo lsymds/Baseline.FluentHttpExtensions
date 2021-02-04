@@ -328,18 +328,17 @@ namespace Baseline.FluentHttpExtensions
     public static class HttpResponseMessageExtensions
     {
         /// <summary>
-        /// Reads the response's content as a stream.
+        /// Reads the response's content as a stream. The new stream is entirely disconnected from the lifecycle of
+        /// <see cref="HttpContent"/>.
         /// </summary>
         /// <param name="response">The response message.</param>
         /// <returns>The response as a stream.</returns>
         public static async Task<Stream> ReadResponseAsStreamAsync(this HttpResponseMessage response)
         {
             var stream = new MemoryStream();
-            using (var contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-            {
-                contentStream.Seek(0, SeekOrigin.Begin);
-                await contentStream.CopyToAsync(stream).ConfigureAwait(false);
-            }
+            var contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            contentStream.Seek(0, SeekOrigin.Begin);
+            await contentStream.CopyToAsync(stream).ConfigureAwait(false);
             stream.Seek(0, SeekOrigin.Begin);
             return stream;
         }
@@ -366,15 +365,13 @@ namespace Baseline.FluentHttpExtensions
             CancellationToken token = default
         )
         {
-            using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-            {
-                stream.Seek(0, SeekOrigin.Begin);
-                return await JsonSerializer.DeserializeAsync<T>(
-                    stream,
-                    jsonSerializerOptions ?? new JsonSerializerOptions {PropertyNameCaseInsensitive = true},
-                    token
-                ).ConfigureAwait(false);
-            }
+            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            stream.Seek(0, SeekOrigin.Begin);
+            return await JsonSerializer.DeserializeAsync<T>(
+                stream,
+                jsonSerializerOptions ?? new JsonSerializerOptions {PropertyNameCaseInsensitive = true},
+                token
+            ).ConfigureAwait(false);
         }
         /// <summary>
         /// Deserializes the XML response into an object.
@@ -383,12 +380,10 @@ namespace Baseline.FluentHttpExtensions
         /// <returns>The deserialized representation of the XML, or null if it could not be casted.</returns>
         public static async Task<T> ReadXmlResponseAsAsync<T>(this HttpResponseMessage response)
         {
-            using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-            {
-                stream.Seek(0, SeekOrigin.Begin);
-                var xmlSerializer = new XmlSerializer(typeof(T));
-                return (T) xmlSerializer.Deserialize(stream);
-            }
+            var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            stream.Seek(0, SeekOrigin.Begin);
+            var xmlSerializer = new XmlSerializer(typeof(T));
+            return (T) xmlSerializer.Deserialize(stream);
         }
     }
 }
@@ -499,21 +494,23 @@ namespace Baseline.FluentHttpExtensions
             CancellationToken token = default
         )
         {
-            var actualRequest = new HttpRequestMessage(request.HttpMethod, request.BuildUri());
-            // Build headers.
-            if (request.Headers != null)
+            using (var actualRequest = new HttpRequestMessage(request.HttpMethod, request.BuildUri()))
             {
-                foreach (var header in request.Headers)
+                // Build headers.
+                if (request.Headers != null)
                 {
-                    actualRequest.Headers.Add(header.Key, header.Value);
+                    foreach (var header in request.Headers)
+                    {
+                        actualRequest.Headers.Add(header.Key, header.Value);
+                    }
                 }
+                // Set body.
+                if (request.GetBodyContentAsync != null)
+                {
+                    actualRequest.Content = await request.GetBodyContentAsync(token);
+                }
+                return await request.HttpClient.SendAsync(actualRequest, token).ConfigureAwait(false);
             }
-            // Set body.
-            if (request.GetBodyContentAsync != null)
-            {
-                actualRequest.Content = await request.GetBodyContentAsync(token);
-            }
-            return await request.HttpClient.SendAsync(actualRequest, token).ConfigureAwait(false);
         }
         /// <summary>
         /// Makes the request and ensures that the response is successful. If the response is not successful, an error
