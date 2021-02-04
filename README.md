@@ -159,10 +159,13 @@ The send triggering methods perform the actual request to the configured endpoin
 continue the fluent interface and return response types relevant to their methods.
 
 * `Task<HttpResponseMessage> MakeRequestAsync()` - Performs the request using the configured parameters and returns the
-response.
+response. Warning: when using this method, you are responsible for the lifetime of the returned response. Make sure you
+dispose of it when you are done.
 
 * `Task EnsureSuccessStatusCodeAsync()` - Performs the request and calls `.EnsureSuccessStatusCode()` on the returned
 response.
+
+* `Task<Stream> ReadResponseAsStreamAsync()` - Reads the content of the response as a stream.
 
 * `Task<string> ReadResponseAsStringAsync()` - Performs the request and reads the request as a string. This method first
 ensures that the status code returned is a successful one.
@@ -178,6 +181,8 @@ object of type T. This method first ensures that the status code returned is a s
 Occasionally, you may want to perform more than one action on a `HttpResponseMessage` returned by the `MakeRequest`
 method. The following methods allow you to do that against a `HttpResponseMessage` saved in a variable multiple times,
 without having to make the request again.
+
+* `Task<Stream> ReadResponseAsStreamAsync()` - Reads the content of the response as a stream.
 
 * `Task<string> ReadResponseAsStringAsync()` - Reads the content of the response as a string.
 
