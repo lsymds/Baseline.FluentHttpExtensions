@@ -1,10 +1,8 @@
-using System;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace Baseline.FluentHttpExtensions
 {
@@ -25,24 +23,25 @@ namespace Baseline.FluentHttpExtensions
             CancellationToken token = default
         )
         {
-            var actualRequest = new HttpRequestMessage(request.HttpMethod, request.BuildUri());
-
-            // Build headers.
-            if (request.Headers != null)
+            using (var actualRequest = new HttpRequestMessage(request.HttpMethod, request.BuildUri()))
             {
-                foreach (var header in request.Headers)
+                // Build headers.
+                if (request.Headers != null)
                 {
-                    actualRequest.Headers.Add(header.Key, header.Value);
+                    foreach (var header in request.Headers)
+                    {
+                        actualRequest.Headers.Add(header.Key, header.Value);
+                    }
                 }
-            }
 
-            // Set body.
-            if (request.GetBodyContentAsync != null)
-            {
-                actualRequest.Content = await request.GetBodyContentAsync(token);
-            }
+                // Set body.
+                if (request.GetBodyContentAsync != null)
+                {
+                    actualRequest.Content = await request.GetBodyContentAsync(token);
+                }
 
-            return await request.HttpClient.SendAsync(actualRequest, token).ConfigureAwait(false);
+                return await request.HttpClient.SendAsync(actualRequest, token).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
