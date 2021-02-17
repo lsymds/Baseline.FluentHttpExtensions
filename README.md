@@ -141,6 +141,9 @@ to `application/json`. If replace is specified, the `Content-Type` response head
 * `WithTextBody(string body, string contentType = "text/plain")` - Sets the request's body to `body` and sets the
 `Content-Type` header to `contentType`.
 
+* `WithFormUrlEncodedBody(params KeyValuePair<string, string>[] body)` - Sets the request's body to that of a form
+url encoded representation of the key/value pairs specified by `body`.
+
 **Builder Methods**
 
 Builder methods allow you to build components such as the finalised URI this library generates without having to physically
