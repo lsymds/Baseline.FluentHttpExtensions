@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -64,6 +65,20 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
 
             response.Should().Contain(@"""Id"":""1""");
             response.Should().Contain(@"""Name"":""foo""");
+        }
+
+        [Fact]
+        public async Task Can_Post_Form_Url_Encoded()
+        {
+            var response = await "https://postman-echo.com/post"
+                .AsAPostRequest(new HttpClient())
+                .WithFormUrlEncodedBody(
+                    new KeyValuePair<string, string>("a", "b"),
+                    new KeyValuePair<string, string>("aTrickyOne", "a!#,")
+                )
+                .ReadResponseAsStringAsync();
+
+            response.Should().Contain(@"""form"":{""a"":""b"",""aTrickyOne"":""a!#,""}");
         }
     }
 }

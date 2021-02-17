@@ -140,6 +140,25 @@ namespace Baseline.FluentHttpExtensions
                 Task.FromResult((HttpContent) new StringContent(body, Encoding.UTF8, contentType));
             return request;
         }
+        /// <summary>
+        /// Sets the request's body to be that of a form URL encoded (i.e. x-www-form-url-encoded) collection of
+        /// key value pairs.
+        /// </summary>
+        /// <param name="request">The http request to set the body against.</param>
+        /// <param name="body">The collection of key value pairs to url encode and set in the body.</param>
+        /// <returns>The current <see cref="HttpRequest"/>.</returns>
+        public static HttpRequest WithFormUrlEncodedBody(
+            this HttpRequest request,
+            params KeyValuePair<string, string>[] body
+        )
+        {
+            if (body == null)
+            {
+                throw new ArgumentNullException(nameof(body));
+            }
+            request.GetBodyContentAsync = _ => Task.FromResult((HttpContent) new FormUrlEncodedContent(body));
+            return request;
+        }
     }
 }
 
