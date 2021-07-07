@@ -10,4 +10,4 @@ all sizes.
 
 ## 📕 Documentation
 
-Documentation is available on our project documentation site here: [https://docs.baselineproject.xyz/fluent-http-extensions/](https://docs.baselineproject.xyz/fluent-http-extensions/).
+Documentation is available on our project documentation site here: [https://docs.getbaseline.net/fluent-http-extensions/](https://docs.getbaseline.net/fluent-http-extensions/).
