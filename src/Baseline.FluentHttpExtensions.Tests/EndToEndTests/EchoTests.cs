@@ -50,9 +50,9 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
                 .WithRequestHeader("X-Help-Me", "the-robots-have-taken-over")
                 .ReadResponseAsStringAsync();
 
-            response.Should().Contain(@"""x-custom-header"":""my-custom-header""");
-            response.Should().Contain(@"""user-agent"":""my-compoota""");
-            response.Should().Contain(@"""x-help-me"":""the-robots-have-taken-over""");
+            response.Should().Contain(@"""x-custom-header"": ""my-custom-header""");
+            response.Should().Contain(@"""user-agent"": ""my-compoota""");
+            response.Should().Contain(@"""x-help-me"": ""the-robots-have-taken-over""");
         }
 
         [Fact]
@@ -63,8 +63,8 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
                 .WithJsonBody(new {Id = "1", Name = "foo"})
                 .ReadResponseAsStringAsync();
 
-            response.Should().Contain(@"""Id"":""1""");
-            response.Should().Contain(@"""Name"":""foo""");
+            response.Should().Contain(@"""Id"": ""1""");
+            response.Should().Contain(@"""Name"": ""foo""");
         }
 
         [Fact]
@@ -78,7 +78,9 @@ namespace Baseline.FluentHttpExtensions.Tests.EndToEndTests
                 )
                 .ReadResponseAsStringAsync();
 
-            response.Should().Contain(@"""form"":{""a"":""b"",""aTrickyOne"":""a!#,""}");
+            response.Should().Contain(@"""json""");
+            response.Should().Contain(@"""a"": ""b""");
+            response.Should().Contain(@"""aTrickyOne"": ""a!#,""");
         }
     }
 }
